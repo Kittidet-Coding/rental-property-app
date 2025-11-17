@@ -1,0 +1,112 @@
+{
+  "query": "SELECT id, address, latitude, longitude FROM properties WHERE address LIKE '%Budapest%' OR address LIKE '%Tarnok%' OR address LIKE '%Szentharomsag%' OR address LIKE '%Miklos%' OR address LIKE '%Vaci%' OR address LIKE '%Petőfi%' OR address LIKE '%Szerb%' OR address LIKE '%Apaczai%' OR address LIKE '%Paulay%' OR address LIKE '%Jozsef%' OR address LIKE '%Terez%' OR address LIKE '%Kazinczy%' OR address LIKE '%Dob%' ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2soF78VmRHNoxE6.6814608990ba --database UHfPMuSUJ7an3ePf6aucJe --execute SELECT id, address, latitude, longitude FROM properties WHERE address LIKE '%Budapest%' OR address LIKE '%Tarnok%' OR address LIKE '%Szentharomsag%' OR address LIKE '%Miklos%' OR address LIKE '%Vaci%' OR address LIKE '%Petőfi%' OR address LIKE '%Szerb%' OR address LIKE '%Apaczai%' OR address LIKE '%Paulay%' OR address LIKE '%Jozsef%' OR address LIKE '%Terez%' OR address LIKE '%Kazinczy%' OR address LIKE '%Dob%' ORDER BY id;",
+  "rows": [
+    {
+      "id": "30001",
+      "address": "1 Tarnok Street",
+      "latitude": "47.4979",
+      "longitude": "19.0402"
+    },
+    {
+      "id": "30002",
+      "address": "5 Szentharomsag Street",
+      "latitude": "47.4991",
+      "longitude": "19.0384"
+    },
+    {
+      "id": "30003",
+      "address": "8 Miklos Street",
+      "latitude": "47.4985",
+      "longitude": "19.0390"
+    },
+    {
+      "id": "30004",
+      "address": "12 Vaci Street",
+      "latitude": "47.4975",
+      "longitude": "19.0405"
+    },
+    {
+      "id": "30005",
+      "address": "25 Petőfi Street",
+      "latitude": "47.4982",
+      "longitude": "19.0412"
+    },
+    {
+      "id": "30006",
+      "address": "18 Szerb Street",
+      "latitude": "47.4988",
+      "longitude": "19.0398"
+    },
+    {
+      "id": "30007",
+      "address": "42 Apaczai Street",
+      "latitude": "47.4980",
+      "longitude": "19.0394"
+    },
+    {
+      "id": "30008",
+      "address": "15 Paulay Street",
+      "latitude": "47.4992",
+      "longitude": "19.0402"
+    },
+    {
+      "id": "30009",
+      "address": "8 Jozsef Attila Street",
+      "latitude": "47.5015",
+      "longitude": "19.0408"
+    },
+    {
+      "id": "30010",
+      "address": "22 Terez Boulevard",
+      "latitude": "47.5025",
+      "longitude": "19.0415"
+    },
+    {
+      "id": "30011",
+      "address": "10 Kazinczy Street",
+      "latitude": "47.4970",
+      "longitude": "19.0390"
+    },
+    {
+      "id": "30012",
+      "address": "5 Dob Street",
+      "latitude": "47.4978",
+      "longitude": "19.0395"
+    },
+    {
+      "id": "30017",
+      "address": "42 Miklos Street",
+      "latitude": "47.4985",
+      "longitude": "19.0390"
+    },
+    {
+      "id": "30042",
+      "address": "18 Kazinczy Street",
+      "latitude": "47.4970",
+      "longitude": "19.0390"
+    },
+    {
+      "id": "30054",
+      "address": "18 Petőfi Street",
+      "latitude": "47.4982",
+      "longitude": "19.0412"
+    },
+    {
+      "id": "30061",
+      "address": "5 Dobó Square",
+      "latitude": "47.4978",
+      "longitude": "19.0395"
+    },
+    {
+      "id": "30066",
+      "address": "18 Petőfi Street",
+      "latitude": "47.4982",
+      "longitude": "19.0412"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\taddress\tlatitude\tlongitude\n30001\t1 Tarnok Street\t47.4979\t19.0402\n30002\t5 Szentharomsag Street\t47.4991\t19.0384\n30003\t8 Miklos Street\t47.4985\t19.0390\n30004\t12 Vaci Street\t47.4975\t19.0405\n30005\t25 Petőfi Street\t47.4982\t19.0412\n30006\t18 Szerb Street\t47.4988\t19.0398\n30007\t42 Apaczai Street\t47.4980\t19.0394\n30008\t15 Paulay Street\t47.4992\t19.0402\n30009\t8 Jozsef Attila Street\t47.5015\t19.0408\n30010\t22 Terez Boulevard\t47.5025\t19.0415\n30011\t10 Kazinczy Street\t47.4970\t19.0390\n30012\t5 Dob Street\t47.4978\t19.0395\n30017\t42 Miklos Street\t47.4985\t19.0390\n30042\t18 Kazinczy Street\t47.4970\t19.0390\n30054\t18 Petőfi Street\t47.4982\t19.0412\n30061\t5 Dobó Square\t47.4978\t19.0395\n30066\t18 Petőfi Street\t47.4982\t19.0412\n",
+  "stderr": "",
+  "execution_time_ms": 56
+}
