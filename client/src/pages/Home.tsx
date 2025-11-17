@@ -30,7 +30,7 @@ export default function Home() {
         <div className="container flex items-center justify-between py-3 lg:py-4">
           <div className="flex items-center gap-2">
             <img src={APP_LOGO} alt={APP_TITLE} className="w-6 h-6 lg:w-8 lg:h-8" />
-            <span className="text-lg lg:text-xl font-bold text-foreground">{APP_TITLE}</span>
+            <span className="text-lg lg:text-xl font-bold text-foreground">Rental Property Center</span>
           </div>
 
                <nav className="hidden md:flex items-center gap-6">
