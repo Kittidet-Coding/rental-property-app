@@ -8,6 +8,7 @@ import { Heart, MapPin, Bed, Bath, Maximize2, ChevronLeft, ChevronRight, Map, Li
 import { APP_LOGO, APP_TITLE } from "@/const";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { calculateDistance, formatDistance, geocodeAddress } from "@/lib/distance";
+import PropertyMapView from "@/components/PropertyMapView";
 
 
 export default function Listings() {
@@ -420,13 +421,11 @@ export default function Listings() {
                 </Button>
               </div>
             ) : viewMode === 'map' ? (
-              <div className="bg-gray-100 rounded-lg overflow-hidden h-96 lg:h-screen flex items-center justify-center">
-                <div className="text-center">
-                  <Map size={48} className="mx-auto mb-4 text-primary" />
-                  <p className="text-foreground/70 mb-2">Map View Coming Soon</p>
-                  <p className="text-sm text-foreground/50">Interactive Google Map with property markers and distance visualization</p>
-                </div>
-              </div>
+              <PropertyMapView
+                properties={propertiesWithDistance}
+                searchCoordinates={searchCoordinates || undefined}
+                onPropertyClick={(property) => setLocation(`/property/${property.id}`)}
+              />
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 lg:gap-6">
                 {propertiesWithDistance.map((property: any) => (

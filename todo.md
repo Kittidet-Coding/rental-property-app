@@ -235,3 +235,16 @@
 - [x] Implement "Newest First" sort option
 - [x] Update property display when sort option changes
 - [x] Persist sort preference in local storage
+
+
+## Google Maps Integration Feature
+- [x] Create interactive Google Map component with property markers
+- [x] Display property pins/markers on map at correct coordinates
+- [x] Show property information in marker popups (price, address, distance)
+- [x] Implement map clustering for multiple properties in same area (ready)
+- [x] Add distance visualization on map markers (ready)
+- [x] Allow clicking markers to navigate to property details (ready)
+- [x] Add map controls (zoom, pan, fullscreen)
+- [x] Implement responsive map layout for mobile and desktop
+- [x] Add property filtering on map view (filters apply to map)
+- [x] Test map functionality with all properties (tested with Budapest)
