@@ -109,3 +109,9 @@
 - [x] Check database for property images
 - [x] Fix image URL generation and display on listings page
 - [x] Fix image display on property detail page
+
+
+## Contact Functionality
+- [x] Fix Call Now button to display landlord phone number
+- [x] Implement Send Message functionality with form
+- [x] Add backend API for contact inquiries

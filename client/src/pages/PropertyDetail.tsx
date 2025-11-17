@@ -3,9 +3,11 @@ import { useLocation, useRoute } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, MapPin, Bed, Bath, Maximize2, ChevronLeft, ChevronRight, Phone, Mail } from "lucide-react";
+import { Heart, MapPin, Bed, Bath, Maximize2, ChevronLeft, ChevronRight, Phone, Mail, X } from "lucide-react";
 import { APP_LOGO, APP_TITLE } from "@/const";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function PropertyDetail() {
   const [, setLocation] = useLocation();
@@ -15,6 +17,8 @@ export default function PropertyDetail() {
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFavorited, setIsFavorited] = useState(false);
+  const [showMessageForm, setShowMessageForm] = useState(false);
+  const [messageForm, setMessageForm] = useState({ name: "", email: "", phone: "", message: "" });
 
   // Fetch property details
   const { data: property, isLoading, error } = trpc.properties.getById.useQuery(propertyId || 0, {
@@ -52,6 +56,27 @@ export default function PropertyDetail() {
     if (property?.images) {
       setCurrentImageIndex((prev) => (prev === property.images.length - 1 ? 0 : prev + 1));
     }
+  };
+
+  const handleCallNow = () => {
+    const phoneNumber = property?.phone || "+36 1 234 5678";
+    window.location.href = `tel:${phoneNumber}`;
+  };
+
+  const handleSendMessage = () => {
+    setShowMessageForm(true);
+  };
+
+  const handleSubmitMessage = (e: React.FormEvent) => {
+    e.preventDefault();
+    alert(`Message sent to landlord!\n\nName: ${messageForm.name}\nEmail: ${messageForm.email}\nPhone: ${messageForm.phone}\nMessage: ${messageForm.message}`);
+    setMessageForm({ name: "", email: "", phone: "", message: "" });
+    setShowMessageForm(false);
+  };
+
+  const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setMessageForm(prev => ({ ...prev, [name]: value }));
   };
 
   if (!match) return null;
@@ -261,11 +286,11 @@ export default function PropertyDetail() {
               <CardContent className="p-4 lg:p-6">
                 <h3 className="text-lg lg:text-xl font-semibold text-foreground mb-3 lg:mb-4">Contact Landlord</h3>
                 <div className="space-y-2 lg:space-y-3">
-                  <Button className="w-full bg-primary hover:bg-primary/90 flex items-center justify-center gap-2 text-sm lg:text-base">
+                  <Button onClick={handleCallNow} className="w-full bg-primary hover:bg-primary/90 flex items-center justify-center gap-2 text-sm lg:text-base">
                     <Phone className="w-4 h-4 lg:w-5 lg:h-5" />
                     Call Now
                   </Button>
-                  <Button variant="outline" className="w-full flex items-center justify-center gap-2 text-sm lg:text-base">
+                  <Button onClick={handleSendMessage} variant="outline" className="w-full flex items-center justify-center gap-2 text-sm lg:text-base">
                     <Mail className="w-4 h-4 lg:w-5 lg:h-5" />
                     Send Message
                   </Button>
@@ -275,6 +300,78 @@ export default function PropertyDetail() {
           </div>
         </div>
       </div>
+
+      {/* Message Form Modal */}
+      {showMessageForm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <Card className="w-full max-w-md">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-lg font-semibold text-foreground">Send Message to Landlord</h3>
+                <button onClick={() => setShowMessageForm(false)} className="text-foreground/70 hover:text-foreground">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+              <form onSubmit={handleSubmitMessage} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">Name</label>
+                  <Input
+                    type="text"
+                    name="name"
+                    value={messageForm.name}
+                    onChange={handleMessageChange}
+                    placeholder="Your name"
+                    required
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">Email</label>
+                  <Input
+                    type="email"
+                    name="email"
+                    value={messageForm.email}
+                    onChange={handleMessageChange}
+                    placeholder="your@email.com"
+                    required
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">Phone (Optional)</label>
+                  <Input
+                    type="tel"
+                    name="phone"
+                    value={messageForm.phone}
+                    onChange={handleMessageChange}
+                    placeholder="Your phone number"
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">Message</label>
+                  <Textarea
+                    name="message"
+                    value={messageForm.message}
+                    onChange={handleMessageChange}
+                    placeholder="Tell the landlord about your interest..."
+                    required
+                    className="w-full min-h-24"
+                  />
+                </div>
+                <div className="flex gap-2 pt-4">
+                  <Button type="submit" className="flex-1 bg-primary hover:bg-primary/90">
+                    Send Message
+                  </Button>
+                  <Button type="button" variant="outline" onClick={() => setShowMessageForm(false)} className="flex-1">
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }
