@@ -148,3 +148,7 @@
 ## Logout Functionality
 - [x] Add logout button to header navigation
 - [x] Implement logout functionality for authenticated users
+
+
+## Hook Call Error Fix
+- [x] Fix Invalid hook call error in logout button by moving useMutation to top level

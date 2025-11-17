@@ -12,6 +12,7 @@ export default function Home() {
   const [, setLocation] = useLocation();
   const [searchCity, setSearchCity] = useState("");
   const { data: stats } = trpc.statistics.getStats.useQuery();
+  const logoutMutation = trpc.auth.logout.useMutation();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,7 +53,6 @@ export default function Home() {
                   Dashboard
                 </Button>
                 <Button variant="ghost" onClick={() => {
-                  const logoutMutation = trpc.auth.logout.useMutation();
                   logoutMutation.mutate(undefined, {
                     onSuccess: () => {
                       window.location.href = "/";
