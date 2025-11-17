@@ -152,3 +152,7 @@
 
 ## Hook Call Error Fix
 - [x] Fix Invalid hook call error in logout button by moving useMutation to top level
+
+
+## Hook Ordering Error Fix
+- [x] Fix "Rendered more hooks than during the previous render" error in AddProperty component
