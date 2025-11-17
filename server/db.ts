@@ -1,4 +1,4 @@
-import { eq, gte, lte, and } from "drizzle-orm";
+import { eq, gte, lte, and, like, or } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { InsertUser, users, properties, propertyImages, favorites } from "../drizzle/schema";
 import { ENV } from './_core/env';
@@ -106,7 +106,14 @@ export async function getProperties(filters?: {
   const conditions = [];
 
   if (filters?.city) {
-    conditions.push(eq(properties.city, filters.city));
+    // Support both exact city match and country match
+    // If city is "Hungary", search by country instead
+    if (filters.city.toLowerCase() === "hungary") {
+      conditions.push(eq(properties.country, "Hungary"));
+    } else {
+      // Otherwise do a case-insensitive partial match on city name
+      conditions.push(like(properties.city, `%${filters.city}%`));
+    }
   }
   if (filters?.minPrice) {
     conditions.push(gte(properties.price, filters.minPrice));

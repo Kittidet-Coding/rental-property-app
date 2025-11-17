@@ -1,0 +1,62 @@
+{
+  "query": "SELECT COUNT(*) as total, city FROM properties WHERE country = 'Hungary' GROUP BY city;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2soF78VmRHNoxE6.6814608990ba --database UHfPMuSUJ7an3ePf6aucJe --execute SELECT COUNT(*) as total, city FROM properties WHERE country = 'Hungary' GROUP BY city;",
+  "rows": [
+    {
+      "total": "27",
+      "city": "Budapest"
+    },
+    {
+      "total": "5",
+      "city": "Debrecen"
+    },
+    {
+      "total": "4",
+      "city": "Szolnok"
+    },
+    {
+      "total": "4",
+      "city": "Veszprém"
+    },
+    {
+      "total": "4",
+      "city": "Zalaegerszeg"
+    },
+    {
+      "total": "4",
+      "city": "Győr"
+    },
+    {
+      "total": "4",
+      "city": "Szeged"
+    },
+    {
+      "total": "4",
+      "city": "Miskolc"
+    },
+    {
+      "total": "4",
+      "city": "Pécs"
+    },
+    {
+      "total": "4",
+      "city": "Nyíregyháza"
+    },
+    {
+      "total": "4",
+      "city": "Eger"
+    },
+    {
+      "total": "4",
+      "city": "Tatabánya"
+    },
+    {
+      "total": "4",
+      "city": "Kecskemét"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\tcity\n27\tBudapest\n5\tDebrecen\n4\tSzolnok\n4\tVeszprém\n4\tZalaegerszeg\n4\tGyőr\n4\tSzeged\n4\tMiskolc\n4\tPécs\n4\tNyíregyháza\n4\tEger\n4\tTatabánya\n4\tKecskemét\n",
+  "stderr": "",
+  "execution_time_ms": 55
+}

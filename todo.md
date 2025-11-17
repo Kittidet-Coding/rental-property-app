@@ -83,3 +83,7 @@
 
 ## Database Population
 - [x] Add 100 example Hungarian rental properties to database
+
+
+## Bug Fixes
+- [x] Fix search returning 0 results for Hungary properties
