@@ -10,21 +10,10 @@ import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function AddProperty() {
+  // All hooks must be called at the top level, before any conditional returns
   const [, setLocation] = useLocation();
   const { isAuthenticated, user, loading } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  // Show loading state while checking authentication
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-foreground/70">Loading...</p>
-        </div>
-      </div>
-    );
-  }
 
   const [formData, setFormData] = useState({
     title: "",
@@ -60,6 +49,19 @@ export default function AddProperty() {
     },
   });
 
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-foreground/70">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show authentication required screen
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-background">
@@ -100,18 +102,21 @@ export default function AddProperty() {
                   className="w-full bg-blue-600 hover:bg-blue-700 flex items-center justify-center gap-2"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.765 8.035 11.591.6.111.82-.26.82-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v 3.293c0 .319.217.694.825.576C20.565 21.795 24 17.31 24 12c0-6.63-5.37-12-12-12z" />
+                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
                   </svg>
-                  Continue with Google
+                  Sign in with Google
                 </Button>
                 <Button
                   onClick={() => window.location.href = getLoginUrl()}
-                  className="w-full bg-blue-500 hover:bg-blue-600 flex items-center justify-center gap-2"
+                  className="w-full bg-blue-700 hover:bg-blue-800 flex items-center justify-center gap-2"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
                   </svg>
-                  Continue with Facebook
+                  Sign in with Facebook
                 </Button>
               </div>
 
@@ -125,26 +130,58 @@ export default function AddProperty() {
     );
   }
 
-  const handleInputChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
-    >
-  ) => {
-    const { name, value, type } = e.target as HTMLInputElement;
+  // Authenticated user form
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     }));
   };
 
-  const handleImageUpload = async (files: FileList | null) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
     if (!files) return;
 
-    for (let i = 0; i < files.length; i++) {
-      const file = files[i];
+    for (const file of Array.from(files)) {
       const preview = URL.createObjectURL(file);
-      const newImage = { file, preview, uploading: false };
-      setUploadedImages((prev) => [...prev, newImage]);
+      setUploadedImages((prev) => [
+        ...prev,
+        { file, preview, uploading: true },
+      ]);
+
+      try {
+        const formDataForUpload = new FormData();
+        formDataForUpload.append("file", file);
+
+        const response = await fetch("/api/upload", {
+          method: "POST",
+          body: formDataForUpload,
+        });
+
+        if (!response.ok) throw new Error("Upload failed");
+        const { url } = await response.json();
+
+        setUploadedImages((prev) =>
+          prev.map((img) =>
+            img.file === file
+              ? { ...img, uploading: false, preview: url }
+              : img
+          )
+        );
+      } catch (error) {
+        setUploadedImages((prev) =>
+          prev.map((img) =>
+            img.file === file
+              ? {
+                  ...img,
+                  uploading: false,
+                  error: "Upload failed",
+                }
+              : img
+          )
+        );
+      }
     }
   };
 
@@ -156,31 +193,27 @@ export default function AddProperty() {
     e.preventDefault();
     setSubmitError("");
 
-    if (!formData.title || !formData.price || !formData.beds || !formData.baths || !formData.address || !formData.city) {
-      setSubmitError("Please fill in all required fields");
-      return;
-    }
+    const imageUrls = uploadedImages
+      .filter((img) => !img.error)
+      .map((img) => img.preview);
 
-    try {
-      const property = await createPropertyMutation.mutateAsync({
-        title: formData.title,
-        description: formData.description || undefined,
-        price: parseInt(formData.price),
-        currency: "HUF",
-        beds: parseInt(formData.beds),
-        baths: parseInt(formData.baths),
-        sqm: formData.sqm ? parseInt(formData.sqm) : undefined,
-        address: formData.address,
-        city: formData.city,
-        country: formData.country,
-        zipCode: formData.zipCode || undefined,
-        type: formData.type,
-        petFriendly: formData.petFriendly,
-        parking: formData.parking,
-      });
-    } catch (error) {
-      console.error("Error creating property:", error);
-    }
+    createPropertyMutation.mutate({
+      title: formData.title,
+      description: formData.description,
+      price: parseInt(formData.price) || 0,
+      beds: parseInt(formData.beds) || 0,
+      baths: parseInt(formData.baths) || 0,
+      sqm: parseInt(formData.sqm) || 0,
+      address: formData.address,
+      city: formData.city,
+      country: formData.country,
+      zipCode: formData.zipCode,
+      type: formData.type,
+      petFriendly: formData.petFriendly,
+      parking: formData.parking,
+    });
+
+    // Images are already uploaded via the /api/upload endpoint
   };
 
   return (
@@ -192,292 +225,320 @@ export default function AddProperty() {
             <img src={APP_LOGO} alt={APP_TITLE} className="w-6 h-6 lg:w-8 lg:h-8" />
             <span className="text-lg lg:text-xl font-bold text-foreground">{APP_TITLE}</span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-foreground/70">Welcome, {user?.name}!</span>
-            <Button variant="outline" size="sm" onClick={() => setLocation("/listings")} className="text-xs lg:text-sm">
-              ← Back to Listings
-            </Button>
-          </div>
+          <Button variant="outline" size="sm" onClick={() => setLocation("/listings")} className="text-xs lg:text-sm">
+            ← Back to Listings
+          </Button>
         </div>
       </header>
 
-      <div className="container py-8 lg:py-12 px-4">
-        <div className="max-w-2xl mx-auto">
-          <div className="mb-8">
-            <h1 className="text-3xl lg:text-4xl font-bold text-foreground mb-2">List Your Property</h1>
-            <p className="text-foreground/70">Fill in the details below to post your rental property on AllYouNeed Property</p>
-          </div>
+      <div className="container py-8 px-4 max-w-2xl">
+        <div className="mb-8">
+          <h1 className="text-3xl lg:text-4xl font-bold text-foreground mb-2">List Your Property</h1>
+          <p className="text-foreground/70">Fill in the details below to list your property on AllYouNeed Property</p>
+        </div>
 
+        <form onSubmit={handleSubmit} className="space-y-6">
           {submitSuccess && (
-            <Card className="mb-6 border-green-200 bg-green-50">
-              <CardContent className="pt-6 flex items-center gap-3">
-                <CheckCircle className="w-5 h-5 text-green-600" />
-                <p className="text-green-800">Property created successfully! Redirecting to listings...</p>
-              </CardContent>
-            </Card>
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-start gap-3">
+              <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-semibold text-green-900">Property Listed Successfully!</h3>
+                <p className="text-sm text-green-800">Redirecting to listings...</p>
+              </div>
+            </div>
           )}
 
           {submitError && (
-            <Card className="mb-6 border-red-200 bg-red-50">
-              <CardContent className="pt-6 flex items-center gap-3">
-                <AlertCircle className="w-5 h-5 text-red-600" />
-                <p className="text-red-800">{submitError}</p>
-              </CardContent>
-            </Card>
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+              <div>
+                <h3 className="font-semibold text-red-900">Error</h3>
+                <p className="text-sm text-red-800">{submitError}</p>
+              </div>
+            </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Basic Information */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Basic Information</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+          {/* Basic Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Basic Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  Property Title *
+                </label>
+                <Input
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleInputChange}
+                  placeholder="e.g., Spacious 2BR Apartment in Budapest"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  Description
+                </label>
+                <Textarea
+                  name="description"
+                  value={formData.description}
+                  onChange={handleInputChange}
+                  placeholder="Describe your property, amenities, and what makes it special..."
+                  rows={4}
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">Property Title *</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">
+                    Monthly Price (HUF) *
+                  </label>
                   <Input
-                    type="text"
-                    name="title"
-                    value={formData.title}
+                    type="number"
+                    name="price"
+                    value={formData.price}
                     onChange={handleInputChange}
-                    placeholder="e.g., Cozy 2-bedroom apartment in downtown"
+                    placeholder="1500"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">Description</label>
-                  <Textarea
-                    name="description"
-                    value={formData.description}
+                  <label className="block text-sm font-medium text-foreground mb-1">
+                    Property Type *
+                  </label>
+                  <select
+                    name="type"
+                    value={formData.type}
                     onChange={handleInputChange}
-                    placeholder="Describe your property, amenities, and what makes it special..."
-                    rows={4}
+                    className="w-full px-3 py-2 border border-input rounded-md bg-background text-foreground"
+                  >
+                    <option value="apartment">Apartment</option>
+                    <option value="studio">Studio</option>
+                    <option value="house">House</option>
+                    <option value="room">Room</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">
+                    Bedrooms
+                  </label>
+                  <Input
+                    type="number"
+                    name="beds"
+                    value={formData.beds}
+                    onChange={handleInputChange}
+                    placeholder="2"
                   />
                 </div>
-              </CardContent>
-            </Card>
-
-            {/* Pricing & Details */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Pricing & Details</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">Monthly Price (HUF) *</label>
-                    <Input
-                      type="number"
-                      name="price"
-                      value={formData.price}
-                      onChange={handleInputChange}
-                      placeholder="e.g., 150000"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">Property Type *</label>
-                    <select
-                      name="type"
-                      value={formData.type}
-                      onChange={handleInputChange}
-                      className="w-full px-3 py-2 border border-border rounded-md bg-background text-foreground"
-                    >
-                      <option value="room">Room</option>
-                      <option value="apartment">Apartment</option>
-                      <option value="house">House</option>
-                      <option value="studio">Studio</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">Bedrooms *</label>
-                    <Input
-                      type="number"
-                      name="beds"
-                      value={formData.beds}
-                      onChange={handleInputChange}
-                      placeholder="e.g., 2"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">Bathrooms *</label>
-                    <Input
-                      type="number"
-                      name="baths"
-                      value={formData.baths}
-                      onChange={handleInputChange}
-                      placeholder="e.g., 1"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">Square Meters</label>
-                    <Input
-                      type="number"
-                      name="sqm"
-                      value={formData.sqm}
-                      onChange={handleInputChange}
-                      placeholder="e.g., 75"
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Location */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Location</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-foreground mb-2">Address *</label>
+                  <label className="block text-sm font-medium text-foreground mb-1">
+                    Bathrooms
+                  </label>
+                  <Input
+                    type="number"
+                    name="baths"
+                    value={formData.baths}
+                    onChange={handleInputChange}
+                    placeholder="1"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">
+                    Size (m²)
+                  </label>
+                  <Input
+                    type="number"
+                    name="sqm"
+                    value={formData.sqm}
+                    onChange={handleInputChange}
+                    placeholder="65"
+                  />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Location */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Location</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  Address *
+                </label>
+                <Input
+                  type="text"
+                  name="address"
+                  value={formData.address}
+                  onChange={handleInputChange}
+                  placeholder="Street address"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">
+                    City *
+                  </label>
                   <Input
                     type="text"
-                    name="address"
-                    value={formData.address}
+                    name="city"
+                    value={formData.city}
                     onChange={handleInputChange}
-                    placeholder="e.g., 123 Main Street"
+                    placeholder="Budapest"
                     required
                   />
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">City *</label>
-                    <Input
-                      type="text"
-                      name="city"
-                      value={formData.city}
-                      onChange={handleInputChange}
-                      placeholder="e.g., Budapest"
-                      required
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">Country</label>
-                    <Input
-                      type="text"
-                      name="country"
-                      value={formData.country}
-                      onChange={handleInputChange}
-                      placeholder="e.g., Hungary"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-foreground mb-2">ZIP Code</label>
-                    <Input
-                      type="text"
-                      name="zipCode"
-                      value={formData.zipCode}
-                      onChange={handleInputChange}
-                      placeholder="e.g., 1011"
-                    />
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Amenities */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Amenities</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center gap-4">
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      name="petFriendly"
-                      checked={formData.petFriendly}
-                      onChange={handleInputChange}
-                      className="w-4 h-4"
-                    />
-                    <span className="text-foreground">Pet Friendly</span>
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1">
+                    ZIP Code
                   </label>
-                  <label className="flex items-center gap-2 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      name="parking"
-                      checked={formData.parking}
-                      onChange={handleInputChange}
-                      className="w-4 h-4"
-                    />
-                    <span className="text-foreground">Parking Available</span>
-                  </label>
+                  <Input
+                    type="text"
+                    name="zipCode"
+                    value={formData.zipCode}
+                    onChange={handleInputChange}
+                    placeholder="1011"
+                  />
                 </div>
-              </CardContent>
-            </Card>
+              </div>
 
-            {/* Images */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Property Images</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div
-                  onClick={() => fileInputRef.current?.click()}
-                  className="border-2 border-dashed border-border rounded-lg p-8 text-center cursor-pointer hover:border-primary transition"
-                >
-                  <Upload className="w-8 h-8 text-foreground/50 mx-auto mb-2" />
-                  <p className="text-foreground font-medium">Click to upload images</p>
-                  <p className="text-sm text-foreground/70">or drag and drop</p>
-                </div>
+              <div>
+                <label className="block text-sm font-medium text-foreground mb-1">
+                  Country
+                </label>
+                <Input
+                  type="text"
+                  name="country"
+                  value={formData.country}
+                  onChange={handleInputChange}
+                  disabled
+                />
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Amenities */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Amenities</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  id="petFriendly"
+                  name="petFriendly"
+                  checked={formData.petFriendly}
+                  onChange={handleInputChange}
+                  className="w-4 h-4 rounded border-input"
+                />
+                <label htmlFor="petFriendly" className="text-sm font-medium text-foreground cursor-pointer">
+                  Pet Friendly
+                </label>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  id="parking"
+                  name="parking"
+                  checked={formData.parking}
+                  onChange={handleInputChange}
+                  className="w-4 h-4 rounded border-input"
+                />
+                <label htmlFor="parking" className="text-sm font-medium text-foreground cursor-pointer">
+                  Parking Available
+                </label>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Images */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Property Images</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="border-2 border-dashed border-border rounded-lg p-6 text-center cursor-pointer hover:border-primary transition-colors"
+                onClick={() => fileInputRef.current?.click()}
+              >
+                <Upload className="w-8 h-8 text-foreground/50 mx-auto mb-2" />
+                <p className="text-sm font-medium text-foreground">Click to upload images</p>
+                <p className="text-xs text-foreground/50">PNG, JPG, GIF up to 10MB</p>
                 <input
                   ref={fileInputRef}
                   type="file"
                   multiple
                   accept="image/*"
-                  onChange={(e) => handleImageUpload(e.target.files)}
+                  onChange={handleImageUpload}
                   className="hidden"
                 />
+              </div>
 
-                {uploadedImages.length > 0 && (
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    {uploadedImages.map((image, index) => (
-                      <div key={index} className="relative">
-                        <img
-                          src={image.preview}
-                          alt={`Preview ${index + 1}`}
-                          className="w-full h-32 object-cover rounded-lg"
-                        />
+              {uploadedImages.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {uploadedImages.map((img, index) => (
+                    <div key={index} className="relative group">
+                      <img
+                        src={img.preview}
+                        alt={`Preview ${index + 1}`}
+                        className="w-full h-32 object-cover rounded-lg"
+                      />
+                      {img.uploading && (
+                        <div className="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white"></div>
+                        </div>
+                      )}
+                      {img.error && (
+                        <div className="absolute inset-0 bg-red-500/50 rounded-lg flex items-center justify-center">
+                          <p className="text-white text-xs text-center">{img.error}</p>
+                        </div>
+                      )}
+                      {!img.uploading && !img.error && (
                         <button
                           type="button"
                           onClick={() => handleRemoveImage(index)}
-                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 hover:bg-red-600"
+                          className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
                         >
                           <X className="w-4 h-4" />
                         </button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
-            {/* Submit Button */}
-            <div className="flex gap-4">
-              <Button
-                type="submit"
-                disabled={createPropertyMutation.isPending}
-                className="flex-1 bg-primary hover:bg-primary/90"
-              >
-                {createPropertyMutation.isPending ? "Publishing..." : "Publish Property"}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setLocation("/listings")}
-                className="flex-1"
-              >
-                Cancel
-              </Button>
-            </div>
-          </form>
-        </div>
+          {/* Submit */}
+          <div className="flex gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setLocation("/listings")}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              disabled={createPropertyMutation.isPending}
+              className="flex-1"
+            >
+              {createPropertyMutation.isPending ? "Listing..." : "List Property"}
+            </Button>
+          </div>
+        </form>
       </div>
     </div>
   );
