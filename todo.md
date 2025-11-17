@@ -115,3 +115,9 @@
 - [x] Fix Call Now button to display landlord phone number
 - [x] Implement Send Message functionality with form
 - [x] Add backend API for contact inquiries
+
+
+## API Error Fix
+- [x] Fix API returning HTML instead of JSON for properties.search endpoint
+- [x] Debug server error when searching for "sweden"
+- [x] Ensure API returns proper JSON error responses
