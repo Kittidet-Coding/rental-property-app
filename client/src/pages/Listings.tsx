@@ -27,6 +27,7 @@ export default function Listings() {
 
   const [searchInput, setSearchInput] = useState(initialCity);
   const [favorites, setFavorites] = useState<Set<number>>(new Set());
+  const [showFilters, setShowFilters] = useState(false);
 
   // Fetch properties
   const { data: properties = [], isLoading } = trpc.properties.search.useQuery(filters);
@@ -136,29 +137,31 @@ export default function Listings() {
       </header>
 
       <div className="container py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 lg:gap-8">
           {/* Sidebar Filters */}
-          <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg border border-border p-6 sticky top-24">
+          <div className={`lg:col-span-1 ${
+            showFilters ? "block" : "hidden lg:block"
+          }`}>
+            <div className="bg-white rounded-lg border border-border p-4 lg:p-6 sticky top-24">
               <h2 className="text-lg font-semibold text-foreground mb-6">Filters</h2>
 
               {/* Price Range */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-foreground mb-2">Price Range</label>
-                <div className="flex gap-2">
+                  <div className="flex gap-2 text-sm">
                   <Input
                     type="number"
                     placeholder="Min"
                     value={filters.minPrice || ""}
                     onChange={(e) => handleFilterChange("minPrice", e.target.value ? parseInt(e.target.value) : undefined)}
-                    className="text-sm"
+                    className="text-xs lg:text-sm"
                   />
                   <Input
                     type="number"
                     placeholder="Max"
                     value={filters.maxPrice || ""}
                     onChange={(e) => handleFilterChange("maxPrice", e.target.value ? parseInt(e.target.value) : undefined)}
-                    className="text-sm"
+                    className="text-xs lg:text-sm"
                   />
                 </div>
               </div>
@@ -166,14 +169,14 @@ export default function Listings() {
               {/* Bedrooms */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-foreground mb-2">Bedrooms</label>
-                <div className="flex gap-2">
+                  <div className="flex gap-1 lg:gap-2">
                   {[1, 2, 3, 4, 5].map((num) => (
                     <Button
                       key={num}
                       variant={filters.beds === num ? "default" : "outline"}
                       size="sm"
                       onClick={() => handleFilterChange("beds", filters.beds === num ? undefined : num)}
-                      className="flex-1"
+                      className="flex-1 text-xs lg:text-sm"
                     >
                       {num}
                     </Button>
@@ -184,14 +187,14 @@ export default function Listings() {
               {/* Bathrooms */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-foreground mb-2">Bathrooms</label>
-                <div className="flex gap-2">
+                  <div className="flex gap-1 lg:gap-2">
                   {[1, 2, 3, 4].map((num) => (
                     <Button
                       key={num}
                       variant={filters.baths === num ? "default" : "outline"}
                       size="sm"
                       onClick={() => handleFilterChange("baths", filters.baths === num ? undefined : num)}
-                      className="flex-1"
+                      className="flex-1 text-xs lg:text-sm"
                     >
                       {num}
                     </Button>
@@ -226,17 +229,42 @@ export default function Listings() {
 
           {/* Main Content */}
           <div className="lg:col-span-3">
-            {/* Results Header */}
-            <div className="mb-6">
-              <h1 className="text-2xl font-bold text-foreground mb-2">
-                {filters.city ? `Rentals in ${filters.city}` : "All Rentals"}
-              </h1>
-              <p className="text-foreground/70">
-                {isLoading ? "Loading..." : `${properties.length} listings found`}
-              </p>
+            {/* Results Header with Filter Toggle */}
+            <div className="mb-6 flex items-center justify-between">
+              <div>
+                <h1 className="text-2xl font-bold text-foreground mb-2">
+                  {filters.city ? `Rentals in ${filters.city}` : "All Rentals"}
+                </h1>
+                <p className="text-foreground/70">
+                  {isLoading ? "Loading..." : `${properties.length} listings found`}
+                </p>
+              </div>
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="lg:hidden px-4 py-2 border border-border rounded-lg text-foreground hover:bg-gray-50 transition"
+              >
+                {showFilters ? "Hide Filters" : "Show Filters"}
+              </button>
             </div>
 
+            {/* Original Header (hidden on mobile with filter toggle) */}
+            {!showFilters && (
+              <div className="mb-6 lg:hidden">
+              </div>
+            )}
+
             {/* Property Grid */}
+            {showFilters && (
+              <div className="mb-6 lg:hidden">
+                <button
+                  onClick={() => setShowFilters(false)}
+                  className="w-full px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition"
+                >
+                  View Results
+                </button>
+              </div>
+            )}
+
             {isLoading ? (
               <div className="flex items-center justify-center py-12">
                 <div className="text-center">
@@ -252,7 +280,7 @@ export default function Listings() {
                 </Button>
               </div>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 lg:gap-6">
                 {properties.map((property: any) => (
                   <Card
                     key={property.id}
@@ -260,7 +288,7 @@ export default function Listings() {
                     onClick={() => setLocation(`/property/${property.id}`)}
                   >
                     {/* Image Container */}
-                    <div className="relative bg-gray-200 h-48 overflow-hidden">
+                    <div className="relative bg-gray-200 h-40 sm:h-48 overflow-hidden">
                       {property.images && property.images.length > 0 ? (
                         <img
                           src={property.images[0].imageUrl}
@@ -297,20 +325,20 @@ export default function Listings() {
                     </div>
 
                     {/* Content */}
-                    <CardContent className="p-4">
+                    <CardContent className="p-3 lg:p-4">
                       {/* Price */}
-                      <div className="mb-3">
-                        <p className="text-2xl font-bold text-primary">
+                      <div className="mb-2 lg:mb-3">
+                        <p className="text-xl lg:text-2xl font-bold text-primary">
                           {property.currency} {property.price.toLocaleString()}
                         </p>
                         <p className="text-xs text-foreground/60">/month</p>
                       </div>
 
                       {/* Title */}
-                      <h3 className="font-semibold text-foreground mb-2 line-clamp-2">{property.title}</h3>
+                      <h3 className="font-semibold text-foreground mb-2 line-clamp-2 text-sm lg:text-base">{property.title}</h3>
 
                       {/* Details */}
-                      <div className="flex gap-4 mb-3 text-sm text-foreground/70">
+                      <div className="flex gap-2 lg:gap-4 mb-2 lg:mb-3 text-xs lg:text-sm text-foreground/70">
                         <div className="flex items-center gap-1">
                           <Bed className="w-4 h-4" />
                           <span>{property.beds}</span>
@@ -328,24 +356,24 @@ export default function Listings() {
                       </div>
 
                       {/* Address */}
-                      <div className="flex items-start gap-2 text-sm text-foreground/70 mb-4">
+                      <div className="flex items-start gap-2 text-xs lg:text-sm text-foreground/70 mb-3 lg:mb-4">
                         <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
                         <span className="line-clamp-2">{property.address}</span>
                       </div>
 
                       {/* Amenities */}
-                      <div className="flex gap-2 mb-4">
+                      <div className="flex gap-2 mb-3 lg:mb-4 flex-wrap">
                         {property.petFriendly && (
-                          <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded">Pet Friendly</span>
+                          <span className="text-xs bg-green-100 text-green-800 px-2 py-0.5 rounded whitespace-nowrap">Pet Friendly</span>
                         )}
                         {property.parking && (
-                          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">Parking</span>
+                          <span className="text-xs bg-blue-100 text-blue-800 px-2 py-0.5 rounded whitespace-nowrap">Parking</span>
                         )}
                       </div>
 
                       {/* CTA Button */}
                       <Button
-                        className="w-full bg-primary hover:bg-primary/90"
+                        className="w-full bg-primary hover:bg-primary/90 text-sm lg:text-base"
                         onClick={(e) => {
                           e.stopPropagation();
                           setLocation(`/property/${property.id}`);
@@ -361,26 +389,28 @@ export default function Listings() {
 
             {/* Pagination */}
             {properties.length > 0 && (
-              <div className="flex items-center justify-center gap-4 mt-8">
+              <div className="flex items-center justify-center gap-2 lg:gap-4 mt-6 lg:mt-8 flex-wrap">
                 <Button
                   variant="outline"
+                  size="sm"
                   disabled={filters.offset === 0}
                   onClick={() => handleFilterChange("offset", Math.max(0, filters.offset - filters.limit))}
                 >
-                  <ChevronLeft className="w-4 h-4 mr-2" />
-                  Previous
+                  <ChevronLeft className="w-4 h-4" />
+                  <span className="hidden sm:inline ml-2">Previous</span>
                 </Button>
 
-                <span className="text-foreground/70">
+                <span className="text-foreground/70 text-sm">
                   Page {Math.floor(filters.offset / filters.limit) + 1}
                 </span>
 
                 <Button
                   variant="outline"
+                  size="sm"
                   onClick={() => handleFilterChange("offset", filters.offset + filters.limit)}
                 >
-                  Next
-                  <ChevronRight className="w-4 h-4 ml-2" />
+                  <span className="hidden sm:inline mr-2">Next</span>
+                  <ChevronRight className="w-4 h-4" />
                 </Button>
               </div>
             )}
