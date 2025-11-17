@@ -1,8 +1,8 @@
 import { eq, gte, lte, and, like, or, count } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users, properties, propertyImages, favorites } from "../drizzle/schema";
+import { InsertUser, users, properties, propertyImages, favorites, contacts } from "../drizzle/schema";
 import { ENV } from './_core/env';
-import type { InsertProperty } from "../drizzle/schema";
+import type { InsertProperty, Contact } from "../drizzle/schema";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -263,5 +263,61 @@ export async function getStatistics() {
   } catch (error) {
     console.error("Error fetching statistics:", error);
     return { totalProperties: 0, totalCities: 0, totalUsers: 0 };
+  }
+}
+
+
+// Landlord Dashboard Functions
+export async function getLandlordProperties(ownerId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db.select().from(properties).where(eq(properties.ownerId, ownerId));
+}
+
+export async function getLandlordInquiries(ownerId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  // Get all inquiries for properties owned by this landlord
+  return db
+    .select({
+      contact: contacts,
+      property: properties,
+    })
+    .from(contacts)
+    .innerJoin(properties, eq(contacts.propertyId, properties.id))
+    .where(eq(properties.ownerId, ownerId))
+    .orderBy(contacts.createdAt);
+}
+
+export async function getLandlordDashboardStats(ownerId: number) {
+  const db = await getDb();
+  if (!db) return { totalProperties: 0, totalInquiries: 0, totalViews: 0 };
+
+  try {
+    // Get landlord's properties count
+    const propertiesResult = await db
+      .select({ count: count() })
+      .from(properties)
+      .where(eq(properties.ownerId, ownerId));
+    const totalProperties = propertiesResult[0]?.count || 0;
+
+    // Get landlord's inquiries count
+    const inquiriesResult = await db
+      .select({ count: count() })
+      .from(contacts)
+      .innerJoin(properties, eq(contacts.propertyId, properties.id))
+      .where(eq(properties.ownerId, ownerId));
+    const totalInquiries = inquiriesResult[0]?.count || 0;
+
+    return {
+      totalProperties,
+      totalInquiries,
+      totalViews: 0,
+    };
+  } catch (error) {
+    console.error("Error fetching landlord stats:", error);
+    return { totalProperties: 0, totalInquiries: 0, totalViews: 0 };
   }
 }

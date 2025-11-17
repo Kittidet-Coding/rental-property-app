@@ -3,7 +3,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
-import { getProperties, getPropertyById, getPropertyImages, createProperty, updateProperty, deleteProperty, toggleFavorite, getUserFavorites, isFavorite, getStatistics } from "./db";
+import { getProperties, getPropertyById, getPropertyImages, createProperty, updateProperty, deleteProperty, toggleFavorite, getUserFavorites, isFavorite, getStatistics, getLandlordProperties, getLandlordInquiries, getLandlordDashboardStats } from "./db";
 import { TRPCError } from "@trpc/server";
 
 export const appRouter = router({
@@ -56,7 +56,7 @@ export const appRouter = router({
           title: z.string(),
           description: z.string().optional(),
           price: z.number(),
-          currency: z.string().optional().default("HUF"),
+          currency: z.string().optional(),
           beds: z.number(),
           baths: z.number(),
           sqm: z.number().optional(),
@@ -64,19 +64,16 @@ export const appRouter = router({
           city: z.string(),
           country: z.string(),
           zipCode: z.string().optional(),
-          latitude: z.string().optional(),
-          longitude: z.string().optional(),
           type: z.string(),
-          petFriendly: z.boolean().optional().default(false),
-          parking: z.boolean().optional().default(false),
+          petFriendly: z.boolean().optional(),
+          parking: z.boolean().optional(),
         })
       )
       .mutation(async ({ ctx, input }) => {
-        const property = await createProperty({
+        return createProperty({
           ...input,
           ownerId: ctx.user.id,
         });
-        return property;
       }),
 
     update: protectedProcedure
@@ -93,6 +90,7 @@ export const appRouter = router({
           city: z.string().optional(),
           country: z.string().optional(),
           zipCode: z.string().optional(),
+          type: z.string().optional(),
           petFriendly: z.boolean().optional(),
           parking: z.boolean().optional(),
         })
@@ -146,6 +144,20 @@ export const appRouter = router({
   statistics: router({
     getStats: publicProcedure.query(async () => {
       return getStatistics();
+    }),
+  }),
+
+  landlord: router({
+    myProperties: protectedProcedure.query(async ({ ctx }) => {
+      return getLandlordProperties(ctx.user.id);
+    }),
+
+    myInquiries: protectedProcedure.query(async ({ ctx }) => {
+      return getLandlordInquiries(ctx.user.id);
+    }),
+
+    dashboardStats: protectedProcedure.query(async ({ ctx }) => {
+      return getLandlordDashboardStats(ctx.user.id);
     }),
   }),
 });

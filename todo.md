@@ -133,3 +133,13 @@
 
 ## Authentication Page Fix
 - [x] Debug and fix authentication page not displaying on Add Property
+
+
+## Landlord Dashboard
+- [x] Create Landlord Dashboard page layout
+- [x] Add property management section (list, edit, delete properties)
+- [x] Add inquiries/contacts section showing received messages
+- [x] Add property performance metrics and analytics
+- [x] Create backend API endpoints for landlord data
+- [x] Add navigation link to Dashboard from header
+- [x] Test dashboard functionality
