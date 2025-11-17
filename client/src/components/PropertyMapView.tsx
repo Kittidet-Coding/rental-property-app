@@ -36,19 +36,27 @@ export default function PropertyMapView({
       return searchCoordinates;
     }
 
-    // Filter out properties with invalid coordinates
-    const validProperties = properties.filter(
-      (p) => isFinite(p.latitude) && isFinite(p.longitude)
-    );
+    // Filter out properties with invalid coordinates, converting to numbers
+    const validProperties = properties.filter((p) => {
+      const lat = typeof p.latitude === 'string' ? parseFloat(p.latitude) : p.latitude;
+      const lng = typeof p.longitude === 'string' ? parseFloat(p.longitude) : p.longitude;
+      return isFinite(lat) && isFinite(lng);
+    });
 
     if (validProperties.length === 0) {
       return { lat: 47.4979, lng: 19.0402 }; // Budapest center
     }
 
     const avgLat =
-      validProperties.reduce((sum, p) => sum + p.latitude, 0) / validProperties.length;
+      validProperties.reduce((sum, p) => {
+        const lat = typeof p.latitude === 'string' ? parseFloat(p.latitude) : p.latitude;
+        return sum + lat;
+      }, 0) / validProperties.length;
     const avgLng =
-      validProperties.reduce((sum, p) => sum + p.longitude, 0) / validProperties.length;
+      validProperties.reduce((sum, p) => {
+        const lng = typeof p.longitude === 'string' ? parseFloat(p.longitude) : p.longitude;
+        return sum + lng;
+      }, 0) / validProperties.length;
 
     return { lat: avgLat, lng: avgLng };
   };
@@ -60,24 +68,42 @@ export default function PropertyMapView({
   };
 
   const addPropertyMarkers = (map: google.maps.Map) => {
-    // Clear existing markers
-    markersRef.current.forEach((marker) => {
-      marker.map = null;
-    });
-    markersRef.current = [];
-
-    // Filter out properties with invalid coordinates
-    const validProperties = properties.filter(
-      (p) => isFinite(p.latitude) && isFinite(p.longitude)
-    );
-
-    // Add markers for each valid property
-    validProperties.forEach((property) => {
-      const marker = new google.maps.marker.AdvancedMarkerElement({
-        map,
-        position: { lat: property.latitude, lng: property.longitude },
-        title: property.title,
+    try {
+      // Clear existing markers
+      markersRef.current.forEach((marker) => {
+        marker.map = null;
       });
+      markersRef.current = [];
+
+      // Filter out properties with invalid coordinates, converting to numbers
+      const validProperties = properties.filter((p) => {
+        try {
+          const lat = typeof p.latitude === 'string' ? parseFloat(p.latitude) : p.latitude;
+          const lng = typeof p.longitude === 'string' ? parseFloat(p.longitude) : p.longitude;
+          return isFinite(lat) && isFinite(lng);
+        } catch (e) {
+          console.warn('Invalid coordinates for property:', p.id, e);
+          return false;
+        }
+      });
+
+      // Add markers for each valid property
+      validProperties.forEach((property) => {
+        try {
+          const lat = typeof property.latitude === 'string' ? parseFloat(property.latitude) : property.latitude;
+          const lng = typeof property.longitude === 'string' ? parseFloat(property.longitude) : property.longitude;
+          
+          // Double-check coordinates are valid numbers
+          if (!isFinite(lat) || !isFinite(lng)) {
+            console.warn('Skipping property with invalid coordinates:', property.id, { lat, lng });
+            return;
+          }
+          
+          const marker = new google.maps.marker.AdvancedMarkerElement({
+            map,
+            position: { lat, lng },
+            title: property.title,
+          });
 
       // Create info window content
       const infoContent = document.createElement('div');
@@ -111,19 +137,33 @@ export default function PropertyMapView({
         }
       });
 
-      (marker as any).infoWindow = infoWindow;
-      markersRef.current.push(marker);
-    });
-
-    // Fit bounds to show all markers
-    if (validProperties.length > 0) {
-      const bounds = new google.maps.LatLngBounds();
-      validProperties.forEach((property) => {
-        bounds.extend({ lat: property.latitude, lng: property.longitude });
+          (marker as any).infoWindow = infoWindow;
+          markersRef.current.push(marker);
+        } catch (e) {
+          console.error('Error creating marker for property:', property.id, e);
+        }
       });
-      map.fitBounds(bounds, { top: 50, right: 50, bottom: 50, left: 50 });
+
+      // Fit bounds to show all markers
+      if (validProperties.length > 0) {
+        try {
+          const bounds = new google.maps.LatLngBounds();
+          validProperties.forEach((property) => {
+            const lat = typeof property.latitude === 'string' ? parseFloat(property.latitude) : property.latitude;
+            const lng = typeof property.longitude === 'string' ? parseFloat(property.longitude) : property.longitude;
+            if (isFinite(lat) && isFinite(lng)) {
+              bounds.extend({ lat, lng });
+            }
+          });
+          map.fitBounds(bounds, { top: 50, right: 50, bottom: 50, left: 50 });
+        } catch (e) {
+          console.warn('Error fitting bounds:', e);
+        }
+      }
+    } catch (e) {
+      console.error('Error adding property markers:', e);
     }
-  };
+  }
 
   useEffect(() => {
     if (mapRef.current) {
