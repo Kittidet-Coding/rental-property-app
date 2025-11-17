@@ -201,3 +201,10 @@
 - [x] Display distance in property detail pages
 - [x] Sort properties by distance from search location
 - [x] Show distance in kilometers (km)
+
+
+## Distance Display Fix
+- [x] Show distance on property cards only when user performs a search
+- [x] Hide distance when no search query is entered
+- [x] Display distance with km unit consistently across all property listings
+- [x] Sort properties by distance when search is performed

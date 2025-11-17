@@ -31,6 +31,7 @@ export default function Listings() {
   const [showFilters, setShowFilters] = useState(false);
   const [searchCoordinates, setSearchCoordinates] = useState<{ lat: number; lng: number } | null>(null);
   const [propertiesWithDistance, setPropertiesWithDistance] = useState<any[]>([]);
+  const [hasSearched, setHasSearched] = useState(false);
 
   // Fetch properties
   const { data: properties = [], isLoading } = trpc.properties.search.useQuery(filters);
@@ -49,7 +50,7 @@ export default function Listings() {
 
   // Calculate distances when properties or search coordinates change
   useEffect(() => {
-    if (properties.length > 0 && searchCoordinates) {
+    if (properties.length > 0 && searchCoordinates && hasSearched) {
       const withDistance = properties.map((property: any) => {
         if (property.latitude && property.longitude) {
           const distance = calculateDistance(
@@ -65,10 +66,12 @@ export default function Listings() {
       // Sort by distance
       withDistance.sort((a: any, b: any) => (a.distance || Infinity) - (b.distance || Infinity));
       setPropertiesWithDistance(withDistance);
-    } else {
+    } else if (properties.length > 0) {
       setPropertiesWithDistance(properties);
     }
-  }, [properties, searchCoordinates]);
+  }, [properties, searchCoordinates, hasSearched]);
+
+
 
   const toggleFavoriteMutation = trpc.favorites.toggle.useMutation({
     onSuccess: (result, variables) => {
@@ -91,6 +94,7 @@ export default function Listings() {
       city: searchInput,
       offset: 0,
     }));
+    setHasSearched(true);
 
     if (searchInput) {
       try {
@@ -402,9 +406,9 @@ export default function Listings() {
                         <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
                         <div className="flex-1">
                           <span className="line-clamp-2">{property.address}</span>
-                          {property.distance !== undefined && (
+                          {property.distance !== undefined && hasSearched && (
                             <div className="text-xs text-primary font-semibold mt-1">
-                              {formatDistance(property.distance)}
+                              {formatDistance(Math.round(property.distance))}
                             </div>
                           )}
                         </div>
