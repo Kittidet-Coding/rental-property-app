@@ -257,3 +257,9 @@
 - [x] Ensure PropertyMapView passes valid coordinates
 - [x] Handle null/undefined coordinates in PropertyMapView
 - [x] Create helper function for safe coordinate conversion
+
+
+## Map Enhancements
+- [x] Add map to property detail page showing property location
+- [x] Enhance marker info windows with property images and better styling
+- [x] Implement directions functionality from user location to property

@@ -6,6 +6,7 @@ interface Property {
   id: number;
   title: string;
   price: number;
+  currency?: string;
   address: string;
   latitude: number | string | null | undefined;
   longitude: number | string | null | undefined;
@@ -13,6 +14,7 @@ interface Property {
   beds?: number;
   baths?: number;
   sqm?: number;
+  images?: Array<{ imageUrl: string }>;
 }
 
 interface PropertyMapViewProps {
@@ -114,13 +116,23 @@ export default function PropertyMapView({
 
           // Create info window content
           const infoContent = document.createElement('div');
-          infoContent.className = 'p-3 max-w-xs';
+          infoContent.className = 'p-0 max-w-xs rounded-lg overflow-hidden bg-white';
+          
+          const imageUrl = property.images && property.images.length > 0 ? property.images[0].imageUrl : null;
+          const currency = property.currency || '$';
+          
           infoContent.innerHTML = `
-            <div class="font-semibold text-sm">${property.title}</div>
-            <div class="text-blue-600 font-bold text-lg">$${property.price.toLocaleString()}/month</div>
-            <div class="text-gray-600 text-xs mt-1">${property.address}</div>
-            ${property.distance ? `<div class="text-gray-500 text-xs mt-1">${property.distance.toFixed(1)} km away</div>` : ''}
-            ${property.beds ? `<div class="text-gray-600 text-xs mt-1">${property.beds} beds • ${property.baths} baths • ${property.sqm} m²</div>` : ''}
+            <div class="bg-white rounded-lg overflow-hidden shadow-lg">
+              ${imageUrl ? `<img src="${imageUrl}" alt="${property.title}" class="w-full h-32 object-cover" />` : '<div class="w-full h-32 bg-gray-300 flex items-center justify-center text-gray-500">No Image</div>'}
+              <div class="p-3">
+                <div class="font-semibold text-sm text-gray-800">${property.title}</div>
+                <div class="text-blue-600 font-bold text-base mt-1">${currency} ${property.price.toLocaleString()}/month</div>
+                <div class="text-gray-600 text-xs mt-2">${property.address}</div>
+                ${property.distance ? `<div class="text-gray-500 text-xs mt-1">📍 ${property.distance.toFixed(1)} km away</div>` : ''}
+                ${property.beds ? `<div class="text-gray-600 text-xs mt-2">🛏️ ${property.beds} beds • 🚿 ${property.baths} baths • 📐 ${property.sqm} m²</div>` : ''}
+                <button class="mt-3 w-full bg-blue-600 text-white text-xs py-2 rounded hover:bg-blue-700 transition">View Details</button>
+              </div>
+            </div>
           `;
 
           const infoWindow = new google.maps.InfoWindow({

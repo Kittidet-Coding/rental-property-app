@@ -3,11 +3,12 @@ import { useLocation, useRoute } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, MapPin, Bed, Bath, Maximize2, ChevronLeft, ChevronRight, Phone, Mail, X } from "lucide-react";
+import { Heart, MapPin, Bed, Bath, Maximize2, ChevronLeft, ChevronRight, Phone, Mail, X, Navigation } from "lucide-react";
 import { APP_LOGO, APP_TITLE } from "@/const";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { MapView } from "@/components/Map";
 
 export default function PropertyDetail() {
   const [, setLocation] = useLocation();
@@ -258,7 +259,7 @@ export default function PropertyDetail() {
                 {/* Location */}
                 <div className="mb-6 lg:mb-8 pb-6 lg:pb-8 border-b border-border">
                   <h3 className="text-lg lg:text-xl font-semibold text-foreground mb-3 lg:mb-4">Location</h3>
-                  <div className="flex items-start gap-2 lg:gap-3">
+                  <div className="flex items-start gap-2 lg:gap-3 mb-4">
                     <MapPin className="w-4 h-4 lg:w-5 lg:h-5 text-primary mt-1 flex-shrink-0" />
                     <div className="text-xs lg:text-base">
                       <p className="font-medium text-foreground">{property.address}</p>
@@ -268,6 +269,33 @@ export default function PropertyDetail() {
                       {property.zipCode && <p className="text-foreground/70">{property.zipCode}</p>}
                     </div>
                   </div>
+                  
+                  {/* Directions Button */}
+                  <Button
+                    onClick={() => {
+                      const encodedAddress = encodeURIComponent(`${property.address}, ${property.city}, ${property.country}`);
+                      window.open(`https://www.google.com/maps/dir/?api=1&destination=${encodedAddress}`, '_blank');
+                    }}
+                    className="mb-4 gap-2"
+                    variant="outline"
+                  >
+                    <Navigation className="w-4 h-4" />
+                    Get Directions
+                  </Button>
+                  
+                  {/* Property Map */}
+                  {property.latitude && property.longitude && (
+                    <div className="mt-4 rounded-lg overflow-hidden border border-border h-80">
+                      <MapView
+                        initialCenter={{
+                          lat: typeof property.latitude === 'string' ? parseFloat(property.latitude) : property.latitude,
+                          lng: typeof property.longitude === 'string' ? parseFloat(property.longitude) : property.longitude,
+                        }}
+                        initialZoom={16}
+                        onMapReady={() => {}}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 {/* Amenities */}
