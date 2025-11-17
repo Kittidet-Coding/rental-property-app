@@ -1,0 +1,130 @@
+{
+  "query": "SELECT id, title, latitude, longitude FROM properties WHERE id >= 30001 AND id <= 30020 LIMIT 20;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2soF78VmRHNoxE6.6814608990ba --database UHfPMuSUJ7an3ePf6aucJe --execute SELECT id, title, latitude, longitude FROM properties WHERE id >= 30001 AND id <= 30020 LIMIT 20;",
+  "rows": [
+    {
+      "id": "30001",
+      "title": "Elegant Studio in Castle District",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    },
+    {
+      "id": "30002",
+      "title": "Luxury 2BR Apartment with Danube View",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    },
+    {
+      "id": "30003",
+      "title": "Cozy 1BR Near Matthias Church",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    },
+    {
+      "id": "30004",
+      "title": "Modern Studio in City Center",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    },
+    {
+      "id": "30005",
+      "title": "3BR Family Apartment Downtown",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    },
+    {
+      "id": "30006",
+      "title": "Renovated 1BR with Balcony",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    },
+    {
+      "id": "30007",
+      "title": "Luxury Penthouse 2BR",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    },
+    {
+      "id": "30008",
+      "title": "Bright 1BR Near Andrássy Avenue",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    },
+    {
+      "id": "30009",
+      "title": "2BR Apartment with Garden Access",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    },
+    {
+      "id": "30010",
+      "title": "Studio Near Oktogon Square",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    },
+    {
+      "id": "30011",
+      "title": "Trendy 1BR in Jewish Quarter",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    },
+    {
+      "id": "30012",
+      "title": "2BR Loft with High Ceilings",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    },
+    {
+      "id": "30013",
+      "title": "Charming Studio with Exposed Brick",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    },
+    {
+      "id": "30014",
+      "title": "3BR Family Home in Quiet Area",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    },
+    {
+      "id": "30015",
+      "title": "Budget-Friendly Studio",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    },
+    {
+      "id": "30016",
+      "title": "2BR Apartment Near Corvin Cinema",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    },
+    {
+      "id": "30017",
+      "title": "1BR with Modern Kitchen",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    },
+    {
+      "id": "30018",
+      "title": "Riverside Studio with Balcony",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    },
+    {
+      "id": "30019",
+      "title": "2BR Apartment with Parking",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    },
+    {
+      "id": "30020",
+      "title": "Spacious 3BR Family Home",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tlatitude\tlongitude\n30001\tElegant Studio in Castle District\tNULL\tNULL\n30002\tLuxury 2BR Apartment with Danube View\tNULL\tNULL\n30003\tCozy 1BR Near Matthias Church\tNULL\tNULL\n30004\tModern Studio in City Center\tNULL\tNULL\n30005\t3BR Family Apartment Downtown\tNULL\tNULL\n30006\tRenovated 1BR with Balcony\tNULL\tNULL\n30007\tLuxury Penthouse 2BR\tNULL\tNULL\n30008\tBright 1BR Near Andrássy Avenue\tNULL\tNULL\n30009\t2BR Apartment with Garden Access\tNULL\tNULL\n30010\tStudio Near Oktogon Square\tNULL\tNULL\n30011\tTrendy 1BR in Jewish Quarter\tNULL\tNULL\n30012\t2BR Loft with High Ceilings\tNULL\tNULL\n30013\tCharming Studio with Exposed Brick\tNULL\tNULL\n30014\t3BR Family Home in Quiet Area\tNULL\tNULL\n30015\tBudget-Friendly Studio\tNULL\tNULL\n30016\t2BR Apartment Near Corvin Cinema\tNULL\tNULL\n30017\t1BR with Modern Kitchen\tNULL\tNULL\n30018\tRiverside Studio with Balcony\tNULL\tNULL\n30019\t2BR Apartment with Parking\tNULL\tNULL\n30020\tSpacious 3BR Family Home\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 74
+}

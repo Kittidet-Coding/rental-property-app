@@ -1,0 +1,31 @@
+{
+  "query": "SELECT id, title, latitude, longitude, CONCAT('lat=', latitude, ' lng=', longitude) as coords FROM properties WHERE id IN (30001, 30002, 30020) ORDER BY id;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2soF78VmRHNoxE6.6814608990ba --database UHfPMuSUJ7an3ePf6aucJe --execute SELECT id, title, latitude, longitude, CONCAT('lat=', latitude, ' lng=', longitude) as coords FROM properties WHERE id IN (30001, 30002, 30020) ORDER BY id;",
+  "rows": [
+    {
+      "id": "30001",
+      "title": "Elegant Studio in Castle District",
+      "latitude": "NULL",
+      "longitude": "NULL",
+      "coords": "NULL"
+    },
+    {
+      "id": "30002",
+      "title": "Luxury 2BR Apartment with Danube View",
+      "latitude": "NULL",
+      "longitude": "NULL",
+      "coords": "NULL"
+    },
+    {
+      "id": "30020",
+      "title": "Spacious 3BR Family Home",
+      "latitude": "NULL",
+      "longitude": "NULL",
+      "coords": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\tlatitude\tlongitude\tcoords\n30001\tElegant Studio in Castle District\tNULL\tNULL\tNULL\n30002\tLuxury 2BR Apartment with Danube View\tNULL\tNULL\tNULL\n30020\tSpacious 3BR Family Home\tNULL\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 53
+}

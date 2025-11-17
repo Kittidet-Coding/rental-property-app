@@ -7,8 +7,8 @@ interface Property {
   title: string;
   price: number;
   address: string;
-  latitude: number;
-  longitude: number;
+  latitude: number | string | null | undefined;
+  longitude: number | string | null | undefined;
   distance?: number;
   beds?: number;
   baths?: number;
@@ -19,6 +19,13 @@ interface PropertyMapViewProps {
   properties: Property[];
   onPropertyClick?: (property: Property) => void;
   searchCoordinates?: { lat: number; lng: number };
+}
+
+// Helper function to safely convert coordinate to number
+function toNumber(value: number | string | null | undefined): number | null {
+  if (value == null) return null;
+  const num = typeof value === 'string' ? parseFloat(value) : value;
+  return isFinite(num) ? num : null;
 }
 
 export default function PropertyMapView({
@@ -36,29 +43,35 @@ export default function PropertyMapView({
       return searchCoordinates;
     }
 
-    // Filter out properties with invalid coordinates, converting to numbers
+    // Filter out properties with invalid coordinates
     const validProperties = properties.filter((p) => {
-      const lat = typeof p.latitude === 'string' ? parseFloat(p.latitude) : p.latitude;
-      const lng = typeof p.longitude === 'string' ? parseFloat(p.longitude) : p.longitude;
-      return isFinite(lat) && isFinite(lng);
+      const lat = toNumber(p.latitude);
+      const lng = toNumber(p.longitude);
+      return lat !== null && lng !== null;
     });
 
     if (validProperties.length === 0) {
       return { lat: 47.4979, lng: 19.0402 }; // Budapest center
     }
 
-    const avgLat =
-      validProperties.reduce((sum, p) => {
-        const lat = typeof p.latitude === 'string' ? parseFloat(p.latitude) : p.latitude;
-        return sum + lat;
-      }, 0) / validProperties.length;
-    const avgLng =
-      validProperties.reduce((sum, p) => {
-        const lng = typeof p.longitude === 'string' ? parseFloat(p.longitude) : p.longitude;
-        return sum + lng;
-      }, 0) / validProperties.length;
+    let sumLat = 0;
+    let sumLng = 0;
+    let count = 0;
 
-    return { lat: avgLat, lng: avgLng };
+    validProperties.forEach((p) => {
+      const lat = toNumber(p.latitude);
+      const lng = toNumber(p.longitude);
+      if (lat !== null && lng !== null) {
+        sumLat += lat;
+        sumLng += lng;
+        count++;
+      }
+    });
+
+    return {
+      lat: count > 0 ? sumLat / count : 47.4979,
+      lng: count > 0 ? sumLng / count : 19.0402,
+    };
   };
 
   const handleMapReady = (map: google.maps.Map) => {
@@ -75,67 +88,61 @@ export default function PropertyMapView({
       });
       markersRef.current = [];
 
-      // Filter out properties with invalid coordinates, converting to numbers
+      // Filter out properties with invalid coordinates
       const validProperties = properties.filter((p) => {
-        try {
-          const lat = typeof p.latitude === 'string' ? parseFloat(p.latitude) : p.latitude;
-          const lng = typeof p.longitude === 'string' ? parseFloat(p.longitude) : p.longitude;
-          return isFinite(lat) && isFinite(lng);
-        } catch (e) {
-          console.warn('Invalid coordinates for property:', p.id, e);
-          return false;
-        }
+        const lat = toNumber(p.latitude);
+        const lng = toNumber(p.longitude);
+        return lat !== null && lng !== null;
       });
 
       // Add markers for each valid property
       validProperties.forEach((property) => {
         try {
-          const lat = typeof property.latitude === 'string' ? parseFloat(property.latitude) : property.latitude;
-          const lng = typeof property.longitude === 'string' ? parseFloat(property.longitude) : property.longitude;
-          
-          // Double-check coordinates are valid numbers
-          if (!isFinite(lat) || !isFinite(lng)) {
-            console.warn('Skipping property with invalid coordinates:', property.id, { lat, lng });
+          const lat = toNumber(property.latitude);
+          const lng = toNumber(property.longitude);
+
+          if (lat === null || lng === null) {
+            console.warn('Skipping property with null coordinates:', property.id);
             return;
           }
-          
+
           const marker = new google.maps.marker.AdvancedMarkerElement({
             map,
             position: { lat, lng },
             title: property.title,
           });
 
-      // Create info window content
-      const infoContent = document.createElement('div');
-      infoContent.className = 'p-3 max-w-xs';
-      infoContent.innerHTML = `
-        <div class="font-semibold text-sm">${property.title}</div>
-        <div class="text-blue-600 font-bold text-lg">$${property.price.toLocaleString()}/month</div>
-        <div class="text-gray-600 text-xs mt-1">${property.address}</div>
-        ${property.distance ? `<div class="text-gray-500 text-xs mt-1">${property.distance.toFixed(1)} km away</div>` : ''}
-        ${property.beds ? `<div class="text-gray-600 text-xs mt-1">${property.beds} beds • ${property.baths} baths • ${property.sqm} m²</div>` : ''}
-      `;
+          // Create info window content
+          const infoContent = document.createElement('div');
+          infoContent.className = 'p-3 max-w-xs';
+          infoContent.innerHTML = `
+            <div class="font-semibold text-sm">${property.title}</div>
+            <div class="text-blue-600 font-bold text-lg">$${property.price.toLocaleString()}/month</div>
+            <div class="text-gray-600 text-xs mt-1">${property.address}</div>
+            ${property.distance ? `<div class="text-gray-500 text-xs mt-1">${property.distance.toFixed(1)} km away</div>` : ''}
+            ${property.beds ? `<div class="text-gray-600 text-xs mt-1">${property.beds} beds • ${property.baths} baths • ${property.sqm} m²</div>` : ''}
+          `;
 
-      const infoWindow = new google.maps.InfoWindow({
-        content: infoContent,
-      });
+          const infoWindow = new google.maps.InfoWindow({
+            content: infoContent,
+          });
 
-      // Add click listeners
-      marker.addEventListener('click', () => {
-        // Close all other info windows
-        markersRef.current.forEach((m) => {
-          if ((m as any).infoWindow) {
-            (m as any).infoWindow.close();
-          }
-        });
+          // Add click listeners
+          marker.addEventListener('click', () => {
+            // Close all other info windows
+            markersRef.current.forEach((m) => {
+              if ((m as any).infoWindow) {
+                (m as any).infoWindow.close();
+              }
+            });
 
-        infoWindow.open(map, marker);
-        (marker as any).infoWindow = infoWindow;
+            infoWindow.open(map, marker);
+            (marker as any).infoWindow = infoWindow;
 
-        if (onPropertyClick) {
-          onPropertyClick(property);
-        }
-      });
+            if (onPropertyClick) {
+              onPropertyClick(property);
+            }
+          });
 
           (marker as any).infoWindow = infoWindow;
           markersRef.current.push(marker);
@@ -149,9 +156,9 @@ export default function PropertyMapView({
         try {
           const bounds = new google.maps.LatLngBounds();
           validProperties.forEach((property) => {
-            const lat = typeof property.latitude === 'string' ? parseFloat(property.latitude) : property.latitude;
-            const lng = typeof property.longitude === 'string' ? parseFloat(property.longitude) : property.longitude;
-            if (isFinite(lat) && isFinite(lng)) {
+            const lat = toNumber(property.latitude);
+            const lng = toNumber(property.longitude);
+            if (lat !== null && lng !== null) {
               bounds.extend({ lat, lng });
             }
           });
@@ -163,7 +170,7 @@ export default function PropertyMapView({
     } catch (e) {
       console.error('Error adding property markers:', e);
     }
-  }
+  };
 
   useEffect(() => {
     if (mapRef.current) {

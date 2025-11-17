@@ -255,3 +255,5 @@
 - [x] Fix duplicate Google Maps API loading
 - [x] Validate coordinates before setting map center
 - [x] Ensure PropertyMapView passes valid coordinates
+- [x] Handle null/undefined coordinates in PropertyMapView
+- [x] Create helper function for safe coordinate conversion
