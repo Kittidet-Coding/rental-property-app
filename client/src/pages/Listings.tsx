@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
@@ -7,6 +7,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Heart, MapPin, Bed, Bath, Maximize2, ChevronLeft, ChevronRight } from "lucide-react";
 import { APP_LOGO, APP_TITLE } from "@/const";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { calculateDistance, formatDistance, geocodeAddress } from "@/lib/distance";
 
 export default function Listings() {
   const [location, setLocation] = useLocation();
@@ -28,6 +29,8 @@ export default function Listings() {
   const [searchInput, setSearchInput] = useState(initialCity);
   const [favorites, setFavorites] = useState<Set<number>>(new Set());
   const [showFilters, setShowFilters] = useState(false);
+  const [searchCoordinates, setSearchCoordinates] = useState<{ lat: number; lng: number } | null>(null);
+  const [propertiesWithDistance, setPropertiesWithDistance] = useState<any[]>([]);
 
   // Fetch properties
   const { data: properties = [], isLoading } = trpc.properties.search.useQuery(filters);
@@ -38,11 +41,34 @@ export default function Listings() {
   });
 
   // Update favorites set when user favorites load
-  useMemo(() => {
+  useEffect(() => {
     if (userFavorites.length > 0) {
       setFavorites(new Set(userFavorites.map((fav) => fav.id)));
     }
   }, [userFavorites]);
+
+  // Calculate distances when properties or search coordinates change
+  useEffect(() => {
+    if (properties.length > 0 && searchCoordinates) {
+      const withDistance = properties.map((property: any) => {
+        if (property.latitude && property.longitude) {
+          const distance = calculateDistance(
+            parseFloat(property.latitude),
+            parseFloat(property.longitude),
+            searchCoordinates.lat,
+            searchCoordinates.lng
+          );
+          return { ...property, distance };
+        }
+        return property;
+      });
+      // Sort by distance
+      withDistance.sort((a: any, b: any) => (a.distance || Infinity) - (b.distance || Infinity));
+      setPropertiesWithDistance(withDistance);
+    } else {
+      setPropertiesWithDistance(properties);
+    }
+  }, [properties, searchCoordinates]);
 
   const toggleFavoriteMutation = trpc.favorites.toggle.useMutation({
     onSuccess: (result, variables) => {
@@ -58,13 +84,24 @@ export default function Listings() {
     },
   });
 
-  const handleSearch = (e: React.FormEvent) => {
+  const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     setFilters((prev) => ({
       ...prev,
       city: searchInput,
       offset: 0,
     }));
+
+    if (searchInput) {
+      try {
+        const coords = await geocodeAddress(searchInput);
+        if (coords) {
+          setSearchCoordinates(coords);
+        }
+      } catch (error) {
+        console.error("Error geocoding:", error);
+      }
+    }
   };
 
   const handleToggleFavorite = (propertyId: number) => {
@@ -286,7 +323,7 @@ export default function Listings() {
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 lg:gap-6">
-                {properties.map((property: any) => (
+                {propertiesWithDistance.map((property: any) => (
                   <Card
                     key={property.id}
                     className="overflow-hidden hover:shadow-lg transition cursor-pointer"
@@ -363,7 +400,14 @@ export default function Listings() {
                       {/* Address */}
                       <div className="flex items-start gap-2 text-xs lg:text-sm text-foreground/70 mb-3 lg:mb-4">
                         <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
-                        <span className="line-clamp-2">{property.address}</span>
+                        <div className="flex-1">
+                          <span className="line-clamp-2">{property.address}</span>
+                          {property.distance !== undefined && (
+                            <div className="text-xs text-primary font-semibold mt-1">
+                              {formatDistance(property.distance)} away
+                            </div>
+                          )}
+                        </div>
                       </div>
 
                       {/* Amenities */}

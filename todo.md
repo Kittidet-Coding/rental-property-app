@@ -192,3 +192,12 @@
 - [x] Update page titles and headers
 - [x] Update footer copyright text
 - [x] Update browser tab title
+
+
+## Distance Display Feature
+- [x] Integrate Google Maps Geocoding API for address coordinates
+- [x] Calculate distance between search location and each property
+- [x] Display distance in property listings
+- [x] Display distance in property detail pages
+- [x] Sort properties by distance from search location
+- [x] Show distance in kilometers (km)
