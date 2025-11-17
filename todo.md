@@ -267,3 +267,4 @@
 
 ## Bug Fixes
 - [x] Fix missing property markers on Google Map in PropertyMapView
+- [ ] Fix markers not displaying when searching for specific locations (e.g., Budapest)

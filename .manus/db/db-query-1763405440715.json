@@ -1,0 +1,24 @@
+{
+  "query": "SELECT id, title, address, latitude, longitude FROM properties WHERE address LIKE '%Budapest%' OR address LIKE '%Tarnok%' OR address LIKE '%Szentharomsag%' LIMIT 5;",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2soF78VmRHNoxE6.6814608990ba --database UHfPMuSUJ7an3ePf6aucJe --execute SELECT id, title, address, latitude, longitude FROM properties WHERE address LIKE '%Budapest%' OR address LIKE '%Tarnok%' OR address LIKE '%Szentharomsag%' LIMIT 5;",
+  "rows": [
+    {
+      "id": "30001",
+      "title": "Elegant Studio in Castle District",
+      "address": "1 Tarnok Street",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    },
+    {
+      "id": "30002",
+      "title": "Luxury 2BR Apartment with Danube View",
+      "address": "5 Szentharomsag Street",
+      "latitude": "NULL",
+      "longitude": "NULL"
+    }
+  ],
+  "messages": [],
+  "stdout": "id\ttitle\taddress\tlatitude\tlongitude\n30001\tElegant Studio in Castle District\t1 Tarnok Street\tNULL\tNULL\n30002\tLuxury 2BR Apartment with Danube View\t5 Szentharomsag Street\tNULL\tNULL\n",
+  "stderr": "",
+  "execution_time_ms": 56
+}

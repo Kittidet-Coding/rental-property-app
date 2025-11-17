@@ -85,6 +85,7 @@ export default function PropertyMapView({
 
   const addPropertyMarkers = (map: google.maps.Map) => {
     try {
+      console.log('addPropertyMarkers called with', properties.length, 'properties');
       // Clear existing markers
       markersRef.current.forEach((marker) => {
         marker.setMap(null);
@@ -100,8 +101,13 @@ export default function PropertyMapView({
       const validProperties = properties.filter((p) => {
         const lat = toNumber(p.latitude);
         const lng = toNumber(p.longitude);
-        return lat !== null && lng !== null;
+        const isValid = lat !== null && lng !== null;
+        if (!isValid) {
+          console.log('Skipping property', p.id, 'with lat:', p.latitude, 'lng:', p.longitude);
+        }
+        return isValid;
       });
+      console.log('Valid properties for markers:', validProperties.length);
 
       // Add markers for each valid property
       validProperties.forEach((property) => {

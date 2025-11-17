@@ -1,0 +1,14 @@
+{
+  "query": "SELECT COUNT(*) as total, SUM(CASE WHEN latitude IS NULL OR longitude IS NULL THEN 1 ELSE 0 END) as null_coords FROM properties WHERE address LIKE '%Tarnok%' OR address LIKE '%Szentharomsag%' OR address LIKE '%Miklos%' OR address LIKE '%Vaci%' OR address LIKE '%Petőfi%' OR address LIKE '%Szerb%' OR address LIKE '%Apaczai%' OR address LIKE '%Paulay%' OR address LIKE '%Jozsef%' OR address LIKE '%Terez%' OR address LIKE '%Kazinczy%' OR address LIKE '%Dob%';",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2soF78VmRHNoxE6.6814608990ba --database UHfPMuSUJ7an3ePf6aucJe --execute SELECT COUNT(*) as total, SUM(CASE WHEN latitude IS NULL OR longitude IS NULL THEN 1 ELSE 0 END) as null_coords FROM properties WHERE address LIKE '%Tarnok%' OR address LIKE '%Szentharomsag%' OR address LIKE '%Miklos%' OR address LIKE '%Vaci%' OR address LIKE '%Petőfi%' OR address LIKE '%Szerb%' OR address LIKE '%Apaczai%' OR address LIKE '%Paulay%' OR address LIKE '%Jozsef%' OR address LIKE '%Terez%' OR address LIKE '%Kazinczy%' OR address LIKE '%Dob%';",
+  "rows": [
+    {
+      "total": "17",
+      "null_coords": "17"
+    }
+  ],
+  "messages": [],
+  "stdout": "total\tnull_coords\n17\t17\n",
+  "stderr": "",
+  "execution_time_ms": 56
+}
