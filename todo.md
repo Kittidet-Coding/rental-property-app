@@ -87,3 +87,10 @@
 
 ## Bug Fixes
 - [x] Fix search returning 0 results for Hungary properties
+
+
+## Add Property Feature
+- [x] Create Add Property page with form
+- [x] Implement image upload functionality with S3 storage
+- [x] Create property creation API endpoint
+- [x] Test property creation and display in search results

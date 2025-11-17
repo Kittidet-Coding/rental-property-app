@@ -115,9 +115,14 @@ export default function Listings() {
               <img src={APP_LOGO} alt={APP_TITLE} className="w-8 h-8" />
               <span className="text-xl font-bold text-foreground">{APP_TITLE}</span>
             </div>
-            <Button variant="outline" onClick={() => setLocation("/")}>
-              ← Back to Home
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button className="bg-primary hover:bg-primary/90" onClick={() => setLocation("/add-property")}>
+                + List Property
+              </Button>
+              <Button variant="outline" onClick={() => setLocation("/")}>
+                ← Back to Home
+              </Button>
+            </div>
           </div>
 
           {/* Search Bar */}

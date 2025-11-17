@@ -56,7 +56,7 @@ export default function Home() {
                 </Button>
               </>
             )}
-            <Button className="bg-primary hover:bg-primary/90 text-xs lg:text-sm" onClick={() => setLocation("/list-property")}>
+            <Button className="bg-primary hover:bg-primary/90 text-xs lg:text-sm" onClick={() => setLocation("/add-property")}>
               List a Property
             </Button>
           </div>
