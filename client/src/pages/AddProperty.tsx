@@ -89,7 +89,7 @@ export default function AddProperty() {
             <CardContent className="space-y-6">
               <div className="text-center">
                 <p className="text-foreground/70 mb-2">
-                  Join thousands of landlords listing properties on AllYouNeed Property
+                  Join thousands of landlords listing properties on Rental Property Center
                 </p>
                 <p className="text-sm text-foreground/60">
                   Sign in with your Google or Facebook account to get started
@@ -234,7 +234,7 @@ export default function AddProperty() {
       <div className="container py-8 px-4 max-w-2xl">
         <div className="mb-8">
           <h1 className="text-3xl lg:text-4xl font-bold text-foreground mb-2">List Your Property</h1>
-          <p className="text-foreground/70">Fill in the details below to list your property on AllYouNeed Property</p>
+          <p className="text-foreground/70">Fill in the details below to list your property on Rental Property Center</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">

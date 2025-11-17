@@ -271,7 +271,7 @@ export default function Home() {
           </div>
 
           <div className="border-t border-border pt-6 md:pt-8 text-center text-xs md:text-sm text-foreground/70">
-            <p>&copy; 2025 AllYouNeed Property. All rights reserved.</p>
+            <p>&copy; 2025 Rental Property Center. All rights reserved.</p>
           </div>
         </div>
       </footer>

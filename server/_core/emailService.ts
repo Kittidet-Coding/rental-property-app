@@ -108,7 +108,7 @@ export async function sendInquiryNotificationToLandlord(
             
             <p>Please respond to the renter at your earliest convenience.</p>
             
-            <p>Best regards,<br>Rental Property Listing App</p>
+            <p>Best regards,<br>Rental Property Center</p>
           </div>
         </div>
       </body>
@@ -163,7 +163,7 @@ export async function sendInquiryConfirmationToRenter(
             
             <p>We appreciate your interest in our rental platform!</p>
             
-            <p>Best regards,<br>Rental Property Listing App</p>
+            <p>Best regards,<br>Rental Property Center</p>
           </div>
         </div>
       </body>

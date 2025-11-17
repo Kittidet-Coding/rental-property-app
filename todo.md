@@ -184,3 +184,11 @@
 - [x] Send email to renter when inquiry is confirmed
 - [x] Create email templates for notifications
 - [x] Integrate with inquiry creation API
+
+
+## App Name Update
+- [x] Change app title from "Rental Property Listing App" to "Rental Property Center"
+- [x] Update all references in code and configuration
+- [x] Update page titles and headers
+- [x] Update footer copyright text
+- [x] Update browser tab title
