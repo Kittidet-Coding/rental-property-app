@@ -404,7 +404,7 @@ export default function Listings() {
                           <span className="line-clamp-2">{property.address}</span>
                           {property.distance !== undefined && (
                             <div className="text-xs text-primary font-semibold mt-1">
-                              {formatDistance(property.distance)} away
+                              {formatDistance(property.distance)}
                             </div>
                           )}
                         </div>
