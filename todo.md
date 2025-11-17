@@ -94,3 +94,7 @@
 - [x] Implement image upload functionality with S3 storage
 - [x] Create property creation API endpoint
 - [x] Test property creation and display in search results
+
+
+## Branding Updates
+- [x] Update copyright text from "2024 Rental Property Listing App" to "2025 AllYouNeed Property"
