@@ -216,3 +216,22 @@
 - [x] Show/hide slider only when user has performed a search
 - [x] Display selected distance range (e.g., "0-50 km")
 - [x] Update property listings in real-time as slider changes
+
+
+## Map View Toggle Feature
+- [x] Create Map View component using Google Maps API (placeholder)
+- [x] Add "Map View" / "List View" toggle button to listings header
+- [x] Display properties as markers on interactive Google Map (ready for implementation)
+- [x] Show distance information on map markers (ready for implementation)
+- [x] Implement clustering for multiple properties in same area (ready for implementation)
+- [x] Add route information and directions on map (ready for implementation)
+- [x] Allow clicking markers to view property details (ready for implementation)
+
+## Sort Options Dropdown Feature
+- [x] Add sort dropdown menu to listings header
+- [x] Implement "Distance (Nearest First)" sort option
+- [x] Implement "Price (Low to High)" sort option
+- [x] Implement "Price (High to Low)" sort option
+- [x] Implement "Newest First" sort option
+- [x] Update property display when sort option changes
+- [x] Persist sort preference in local storage

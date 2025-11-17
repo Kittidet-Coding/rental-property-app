@@ -4,10 +4,11 @@ import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, MapPin, Bed, Bath, Maximize2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Heart, MapPin, Bed, Bath, Maximize2, ChevronLeft, ChevronRight, Map, List } from "lucide-react";
 import { APP_LOGO, APP_TITLE } from "@/const";
 import { useAuth } from "@/_core/hooks/useAuth";
 import { calculateDistance, formatDistance, geocodeAddress } from "@/lib/distance";
+
 
 export default function Listings() {
   const [location, setLocation] = useLocation();
@@ -33,6 +34,8 @@ export default function Listings() {
   const [propertiesWithDistance, setPropertiesWithDistance] = useState<any[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
   const [maxDistance, setMaxDistance] = useState<number | undefined>(undefined);
+  const [sortBy, setSortBy] = useState<'distance' | 'price-low' | 'price-high' | 'newest'>('distance');
+  const [viewMode, setViewMode] = useState<'list' | 'map'>('list');
 
   // Fetch properties
   const { data: properties = [], isLoading } = trpc.properties.search.useQuery(filters);
@@ -69,13 +72,39 @@ export default function Listings() {
       if (maxDistance !== undefined) {
         filtered = withDistance.filter((p: any) => p.distance === undefined || p.distance <= maxDistance);
       }
-      // Sort by distance
-      filtered.sort((a: any, b: any) => (a.distance || Infinity) - (b.distance || Infinity));
+      // Sort by selected option
+      filtered.sort((a: any, b: any) => {
+        switch (sortBy) {
+          case 'distance':
+            return (a.distance || Infinity) - (b.distance || Infinity);
+          case 'price-low':
+            return (a.price || Infinity) - (b.price || Infinity);
+          case 'price-high':
+            return (b.price || Infinity) - (a.price || Infinity);
+          case 'newest':
+            return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+          default:
+            return 0;
+        }
+      });
       setPropertiesWithDistance(filtered);
     } else if (properties.length > 0) {
-      setPropertiesWithDistance(properties);
+      let sorted = [...properties];
+      sorted.sort((a: any, b: any) => {
+        switch (sortBy) {
+          case 'price-low':
+            return (a.price || Infinity) - (b.price || Infinity);
+          case 'price-high':
+            return (b.price || Infinity) - (a.price || Infinity);
+          case 'newest':
+            return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime();
+          default:
+            return 0;
+        }
+      });
+      setPropertiesWithDistance(sorted);
     }
-  }, [properties, searchCoordinates, hasSearched, maxDistance]);
+  }, [properties, searchCoordinates, hasSearched, maxDistance, sortBy]);
 
 
 
@@ -326,6 +355,37 @@ export default function Listings() {
                 {showFilters ? "Hide Filters" : "Show Filters"}
               </button>
             </div>
+            
+            {/* Sort and View Toggle */}
+            <div className="flex gap-2 items-center flex-wrap mb-6">
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="px-3 py-2 border border-border rounded-md text-sm bg-white text-foreground"
+              >
+                <option value="distance">Sort: Distance (Nearest)</option>
+                <option value="price-low">Sort: Price (Low to High)</option>
+                <option value="price-high">Sort: Price (High to Low)</option>
+                <option value="newest">Sort: Newest First</option>
+              </select>
+              
+              <div className="flex gap-1 border border-border rounded-md p-1">
+                <button
+                  onClick={() => setViewMode('list')}
+                  className={`px-3 py-1.5 rounded transition flex items-center gap-1 text-sm ${viewMode === 'list' ? 'bg-primary text-white' : 'bg-transparent text-foreground hover:bg-gray-100'}`}
+                >
+                  <List size={16} />
+                  <span className="hidden sm:inline">List</span>
+                </button>
+                <button
+                  onClick={() => setViewMode('map')}
+                  className={`px-3 py-1.5 rounded transition flex items-center gap-1 text-sm ${viewMode === 'map' ? 'bg-primary text-white' : 'bg-transparent text-foreground hover:bg-gray-100'}`}
+                >
+                  <Map size={16} />
+                  <span className="hidden sm:inline">Map</span>
+                </button>
+              </div>
+            </div>
 
             {/* Original Header (hidden on mobile with filter toggle) */}
             {!showFilters && (
@@ -358,6 +418,14 @@ export default function Listings() {
                 <Button variant="outline" onClick={handleClearFilters} className="mt-4">
                   Clear Filters
                 </Button>
+              </div>
+            ) : viewMode === 'map' ? (
+              <div className="bg-gray-100 rounded-lg overflow-hidden h-96 lg:h-screen flex items-center justify-center">
+                <div className="text-center">
+                  <Map size={48} className="mx-auto mb-4 text-primary" />
+                  <p className="text-foreground/70 mb-2">Map View Coming Soon</p>
+                  <p className="text-sm text-foreground/50">Interactive Google Map with property markers and distance visualization</p>
+                </div>
               </div>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 lg:gap-6">
