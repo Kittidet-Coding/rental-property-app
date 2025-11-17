@@ -208,3 +208,11 @@
 - [x] Hide distance when no search query is entered
 - [x] Display distance with km unit consistently across all property listings
 - [x] Sort properties by distance when search is performed
+
+
+## Distance Range Slider Feature
+- [x] Add distance range slider to filters panel
+- [x] Filter properties by distance when slider is adjusted
+- [x] Show/hide slider only when user has performed a search
+- [x] Display selected distance range (e.g., "0-50 km")
+- [x] Update property listings in real-time as slider changes

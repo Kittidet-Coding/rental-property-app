@@ -32,6 +32,7 @@ export default function Listings() {
   const [searchCoordinates, setSearchCoordinates] = useState<{ lat: number; lng: number } | null>(null);
   const [propertiesWithDistance, setPropertiesWithDistance] = useState<any[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
+  const [maxDistance, setMaxDistance] = useState<number | undefined>(undefined);
 
   // Fetch properties
   const { data: properties = [], isLoading } = trpc.properties.search.useQuery(filters);
@@ -63,13 +64,18 @@ export default function Listings() {
         }
         return property;
       });
+      // Filter by distance if maxDistance is set
+      let filtered = withDistance;
+      if (maxDistance !== undefined) {
+        filtered = withDistance.filter((p: any) => p.distance === undefined || p.distance <= maxDistance);
+      }
       // Sort by distance
-      withDistance.sort((a: any, b: any) => (a.distance || Infinity) - (b.distance || Infinity));
-      setPropertiesWithDistance(withDistance);
+      filtered.sort((a: any, b: any) => (a.distance || Infinity) - (b.distance || Infinity));
+      setPropertiesWithDistance(filtered);
     } else if (properties.length > 0) {
       setPropertiesWithDistance(properties);
     }
-  }, [properties, searchCoordinates, hasSearched]);
+  }, [properties, searchCoordinates, hasSearched, maxDistance]);
 
 
 
@@ -248,6 +254,26 @@ export default function Listings() {
                 </div>
               </div>
 
+              {/* Distance Range */}
+              {hasSearched && (
+                <div className="mb-6">
+                  <label className="block text-sm font-medium text-foreground mb-2">Distance Range</label>
+                  <div className="space-y-2">
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={maxDistance || 100}
+                      onChange={(e) => setMaxDistance(parseInt(e.target.value))}
+                      className="w-full"
+                    />
+                    <div className="text-xs text-foreground/70">
+                      {maxDistance ? `Up to ${maxDistance} km` : "No limit"}
+                    </div>
+                  </div>
+                </div>
+              )}
+
               {/* Property Type */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-foreground mb-2">Type</label>
@@ -265,8 +291,16 @@ export default function Listings() {
               </div>
 
               {/* Clear Filters */}
-              {activeFiltersCount > 0 && (
-                <Button variant="outline" size="sm" onClick={handleClearFilters} className="w-full">
+              {(activeFiltersCount > 0 || maxDistance !== undefined) && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => {
+                    handleClearFilters();
+                    setMaxDistance(undefined);
+                  }}
+                  className="w-full"
+                >
                   Clear All Filters
                 </Button>
               )}
