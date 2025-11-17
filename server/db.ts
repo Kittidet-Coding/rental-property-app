@@ -1,7 +1,8 @@
-import { eq } from "drizzle-orm";
+import { eq, gte, lte, and } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
-import { InsertUser, users } from "../drizzle/schema";
+import { InsertUser, users, properties, propertyImages, favorites } from "../drizzle/schema";
 import { ENV } from './_core/env';
+import type { InsertProperty } from "../drizzle/schema";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
@@ -89,4 +90,126 @@ export async function getUserByOpenId(openId: string) {
   return result.length > 0 ? result[0] : undefined;
 }
 
-// TODO: add feature queries here as your schema grows.
+export async function getProperties(filters?: {
+  city?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  beds?: number;
+  baths?: number;
+  type?: string;
+  limit?: number;
+  offset?: number;
+}) {
+  const db = await getDb();
+  if (!db) return [];
+
+  const conditions = [];
+
+  if (filters?.city) {
+    conditions.push(eq(properties.city, filters.city));
+  }
+  if (filters?.minPrice) {
+    conditions.push(gte(properties.price, filters.minPrice));
+  }
+  if (filters?.maxPrice) {
+    conditions.push(lte(properties.price, filters.maxPrice));
+  }
+  if (filters?.beds) {
+    conditions.push(eq(properties.beds, filters.beds));
+  }
+  if (filters?.baths) {
+    conditions.push(eq(properties.baths, filters.baths));
+  }
+  if (filters?.type) {
+    conditions.push(eq(properties.type, filters.type));
+  }
+
+  let query: any = db.select().from(properties);
+
+  if (conditions.length > 0) {
+    query = query.where(and(...conditions));
+  }
+
+  if (filters?.limit) {
+    query = query.limit(filters.limit);
+  }
+  if (filters?.offset) {
+    query = query.offset(filters.offset);
+  }
+
+  return query.execute();
+}
+
+export async function getPropertyById(id: number) {
+  const db = await getDb();
+  if (!db) return undefined;
+
+  const result = await db.select().from(properties).where(eq(properties.id, id)).limit(1);
+  return result.length > 0 ? result[0] : undefined;
+}
+
+export async function getPropertyImages(propertyId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db.select().from(propertyImages).where(eq(propertyImages.propertyId, propertyId)).orderBy(propertyImages.displayOrder);
+}
+
+export async function createProperty(data: InsertProperty) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const result = await db.insert(properties).values(data);
+  return result;
+}
+
+export async function updateProperty(id: number, data: Partial<InsertProperty>) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  return db.update(properties).set(data).where(eq(properties.id, id));
+}
+
+export async function deleteProperty(id: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  return db.delete(properties).where(eq(properties.id, id));
+}
+
+export async function toggleFavorite(userId: number, propertyId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+
+  const existing = await db.select().from(favorites).where(
+    and(eq(favorites.userId, userId), eq(favorites.propertyId, propertyId))
+  ).limit(1);
+
+  if (existing.length > 0) {
+    await db.delete(favorites).where(
+      and(eq(favorites.userId, userId), eq(favorites.propertyId, propertyId))
+    );
+    return { isFavorite: false };
+  } else {
+    await db.insert(favorites).values({ userId, propertyId });
+    return { isFavorite: true };
+  }
+}
+
+export async function getUserFavorites(userId: number) {
+  const db = await getDb();
+  if (!db) return [];
+
+  return db.select().from(favorites).where(eq(favorites.userId, userId));
+}
+
+export async function isFavorite(userId: number, propertyId: number) {
+  const db = await getDb();
+  if (!db) return false;
+
+  const result = await db.select().from(favorites).where(
+    and(eq(favorites.userId, userId), eq(favorites.propertyId, propertyId))
+  ).limit(1);
+
+  return result.length > 0;
+}
