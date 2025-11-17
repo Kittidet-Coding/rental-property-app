@@ -144,7 +144,17 @@ export async function getProperties(filters?: {
     query = query.offset(filters.offset);
   }
 
-  return query.execute();
+  const propertiesData = await query.execute();
+  
+  // Fetch images for each property
+  const propertiesWithImages = await Promise.all(
+    propertiesData.map(async (property: any) => {
+      const images = await getPropertyImages(property.id);
+      return { ...property, images };
+    })
+  );
+  
+  return propertiesWithImages;
 }
 
 export async function getPropertyById(id: number) {

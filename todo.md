@@ -103,3 +103,9 @@
 ## Statistics Update
 - [x] Create API procedure to get statistics (property count, cities count, users count)
 - [x] Update Home page to fetch and display real statistics from database
+
+
+## Image Display Fix
+- [x] Check database for property images
+- [x] Fix image URL generation and display on listings page
+- [x] Fix image display on property detail page

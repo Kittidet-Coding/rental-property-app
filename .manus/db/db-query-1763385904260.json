@@ -1,0 +1,9 @@
+{
+  "query": "INSERT INTO propertyImages (propertyId, imageUrl) VALUES \n(6, 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop'),\n(6, 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop'),\n(7, 'https://images.unsplash.com/photo-1570129477492-45a003537e1f?w=800&h=600&fit=crop'),\n(7, 'https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=800&h=600&fit=crop'),\n(8, 'https://images.unsplash.com/photo-1512917774080-9b274b3f5798?w=800&h=600&fit=crop'),\n(8, 'https://images.unsplash.com/photo-1505873242700-f289a29e7e0f?w=800&h=600&fit=crop');",
+  "command": "mysql --batch --raw --column-names --default-character-set=utf8mb4 --host gateway02.us-east-1.prod.aws.tidbcloud.com --port 4000 --user 2soF78VmRHNoxE6.6814608990ba --database UHfPMuSUJ7an3ePf6aucJe --execute INSERT INTO propertyImages (propertyId, imageUrl) VALUES \n(6, 'https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800&h=600&fit=crop'),\n(6, 'https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&h=600&fit=crop'),\n(7, 'https://images.unsplash.com/photo-1570129477492-45a003537e1f?w=800&h=600&fit=crop'),\n(7, 'https://images.unsplash.com/photo-1493857671505-72967e2e2760?w=800&h=600&fit=crop'),\n(8, 'https://images.unsplash.com/photo-1512917774080-9b274b3f5798?w=800&h=600&fit=crop'),\n(8, 'https://images.unsplash.com/photo-1505873242700-f289a29e7e0f?w=800&h=600&fit=crop');",
+  "rows": [],
+  "messages": [],
+  "stdout": "",
+  "stderr": "",
+  "execution_time_ms": 53
+}
