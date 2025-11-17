@@ -248,3 +248,10 @@
 - [x] Implement responsive map layout for mobile and desktop
 - [x] Add property filtering on map view (filters apply to map)
 - [x] Test map functionality with all properties (tested with Budapest)
+
+
+## Google Maps Error Fixes
+- [x] Fix NaN coordinates error in Map component
+- [x] Fix duplicate Google Maps API loading
+- [x] Validate coordinates before setting map center
+- [x] Ensure PropertyMapView passes valid coordinates

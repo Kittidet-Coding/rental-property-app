@@ -69,13 +69,11 @@
  *
  * -------------------------------
  * ✅ SUMMARY
- * - “map-attached” → AdvancedMarkerElement, DirectionsRenderer, Layers.
- * - “standalone” → Geocoder, DirectionsService, DistanceMatrixService, ElevationService.
- * - “data-only” → Place, Geometry utilities.
+ * - "map-attached" → AdvancedMarkerElement, DirectionsRenderer, Layers.
+ * - "standalone" → Geocoder, DirectionsService, DistanceMatrixService, ElevationService.
+ * - "data-only" → Place, Geometry utilities.
  */
-
 /// <reference types="@types/google.maps" />
-
 import { useEffect, useRef } from "react";
 import { usePersistFn } from "@/hooks/usePersistFn";
 import { cn } from "@/lib/utils";
@@ -92,20 +90,38 @@ const FORGE_BASE_URL =
   "https://forge.butterfly-effect.dev";
 const MAPS_PROXY_URL = `${FORGE_BASE_URL}/v1/maps/proxy`;
 
+let mapScriptLoadPromise: Promise<void> | null = null;
+
 function loadMapScript() {
-  return new Promise(resolve => {
-    const script = document.createElement("script");
-    script.src = `${MAPS_PROXY_URL}/maps/api/js?key=${API_KEY}&v=weekly&libraries=marker,places,geocoding,geometry`;
-    script.async = true;
-    script.crossOrigin = "anonymous";
-    script.onload = () => {
-      resolve(null);
-      script.remove(); // Clean up immediately
-    };
-    script.onerror = () => {
-      console.error("Failed to load Google Maps script");
-    };
-    document.head.appendChild(script);
+  return new Promise<void>((resolve) => {
+    // Check if Google Maps is already loaded
+    if (window.google && window.google.maps) {
+      resolve();
+      return;
+    }
+
+    // If already loading, wait for the existing promise
+    if (mapScriptLoadPromise) {
+      mapScriptLoadPromise.then(resolve);
+      return;
+    }
+
+    mapScriptLoadPromise = new Promise<void>((resolveLoad) => {
+      const script = document.createElement("script");
+      script.src = `${MAPS_PROXY_URL}/maps/api/js?key=${API_KEY}&v=weekly&libraries=marker,places,geocoding,geometry`;
+      script.async = true;
+      script.crossOrigin = "anonymous";
+      script.onload = () => {
+        resolveLoad();
+        resolve();
+      };
+      script.onerror = () => {
+        console.error("Failed to load Google Maps script");
+        resolveLoad();
+        resolve();
+      };
+      document.head.appendChild(script);
+    });
   });
 }
 
@@ -150,6 +166,9 @@ export function MapView({
   }, [init]);
 
   return (
-    <div ref={mapContainer} className={cn("w-full h-[500px]", className)} />
+    <div
+      ref={mapContainer}
+      className={cn("w-full h-full min-h-[400px] rounded-lg", className)}
+    />
   );
 }

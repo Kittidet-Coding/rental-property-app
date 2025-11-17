@@ -32,18 +32,23 @@ export default function PropertyMapView({
 
   // Calculate center of map based on properties or search location
   const getMapCenter = () => {
-    if (searchCoordinates) {
+    if (searchCoordinates && isFinite(searchCoordinates.lat) && isFinite(searchCoordinates.lng)) {
       return searchCoordinates;
     }
 
-    if (properties.length === 0) {
+    // Filter out properties with invalid coordinates
+    const validProperties = properties.filter(
+      (p) => isFinite(p.latitude) && isFinite(p.longitude)
+    );
+
+    if (validProperties.length === 0) {
       return { lat: 47.4979, lng: 19.0402 }; // Budapest center
     }
 
     const avgLat =
-      properties.reduce((sum, p) => sum + p.latitude, 0) / properties.length;
+      validProperties.reduce((sum, p) => sum + p.latitude, 0) / validProperties.length;
     const avgLng =
-      properties.reduce((sum, p) => sum + p.longitude, 0) / properties.length;
+      validProperties.reduce((sum, p) => sum + p.longitude, 0) / validProperties.length;
 
     return { lat: avgLat, lng: avgLng };
   };
@@ -61,8 +66,13 @@ export default function PropertyMapView({
     });
     markersRef.current = [];
 
-    // Add markers for each property
-    properties.forEach((property) => {
+    // Filter out properties with invalid coordinates
+    const validProperties = properties.filter(
+      (p) => isFinite(p.latitude) && isFinite(p.longitude)
+    );
+
+    // Add markers for each valid property
+    validProperties.forEach((property) => {
       const marker = new google.maps.marker.AdvancedMarkerElement({
         map,
         position: { lat: property.latitude, lng: property.longitude },
@@ -106,9 +116,9 @@ export default function PropertyMapView({
     });
 
     // Fit bounds to show all markers
-    if (properties.length > 0) {
+    if (validProperties.length > 0) {
       const bounds = new google.maps.LatLngBounds();
-      properties.forEach((property) => {
+      validProperties.forEach((property) => {
         bounds.extend({ lat: property.latitude, lng: property.longitude });
       });
       map.fitBounds(bounds, { top: 50, right: 50, bottom: 50, left: 50 });
