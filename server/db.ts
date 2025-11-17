@@ -1,4 +1,4 @@
-import { eq, gte, lte, and, like, or } from "drizzle-orm";
+import { eq, gte, lte, and, like, or, count } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import { InsertUser, users, properties, propertyImages, favorites } from "../drizzle/schema";
 import { ENV } from './_core/env';
@@ -219,4 +219,39 @@ export async function isFavorite(userId: number, propertyId: number) {
   ).limit(1);
 
   return result.length > 0;
+}
+
+
+export async function getStatistics() {
+  const db = await getDb();
+  if (!db) return { totalProperties: 0, totalCities: 0, totalUsers: 0 };
+
+  try {
+    // Get total properties count
+    const propertiesResult = await db
+      .select({ count: count() })
+      .from(properties);
+    const totalProperties = propertiesResult[0]?.count || 0;
+
+    // Get unique cities count
+    const citiesResult = await db
+      .selectDistinct({ city: properties.city })
+      .from(properties);
+    const totalCities = citiesResult.length;
+
+    // Get total users count
+    const usersResult = await db
+      .select({ count: count() })
+      .from(users);
+    const totalUsers = usersResult[0]?.count || 0;
+
+    return {
+      totalProperties,
+      totalCities,
+      totalUsers,
+    };
+  } catch (error) {
+    console.error("Error fetching statistics:", error);
+    return { totalProperties: 0, totalCities: 0, totalUsers: 0 };
+  }
 }

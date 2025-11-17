@@ -4,12 +4,14 @@ import { Input } from "@/components/ui/input";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
 import { useLocation } from "wouter";
 import { Search, MapPin, Home as HomeIcon, Users } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { trpc } from "@/lib/trpc";
 
 export default function Home() {
   const { user, loading, isAuthenticated } = useAuth();
   const [, setLocation] = useLocation();
   const [searchCity, setSearchCity] = useState("");
+  const { data: stats } = trpc.statistics.getStats.useQuery();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -102,15 +104,15 @@ export default function Home() {
         <div className="container">
           <div className="grid grid-cols-3 gap-4 md:gap-6 lg:gap-8">
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-1 lg:mb-2">10,000+</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-1 lg:mb-2">{stats?.totalProperties || 0}</div>
               <p className="text-xs sm:text-sm lg:text-base text-foreground/70">Properties Available</p>
             </div>
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-1 lg:mb-2">50+</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-1 lg:mb-2">{stats?.totalCities || 0}</div>
               <p className="text-xs sm:text-sm lg:text-base text-foreground/70">Cities Covered</p>
             </div>
             <div className="text-center">
-              <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-1 lg:mb-2">100K+</div>
+              <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-primary mb-1 lg:mb-2">{stats?.totalUsers || 0}</div>
               <p className="text-xs sm:text-sm lg:text-base text-foreground/70">Happy Renters</p>
             </div>
           </div>

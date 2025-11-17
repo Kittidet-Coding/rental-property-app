@@ -3,7 +3,7 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
-import { getProperties, getPropertyById, getPropertyImages, createProperty, updateProperty, deleteProperty, toggleFavorite, getUserFavorites, isFavorite } from "./db";
+import { getProperties, getPropertyById, getPropertyImages, createProperty, updateProperty, deleteProperty, toggleFavorite, getUserFavorites, isFavorite, getStatistics } from "./db";
 import { TRPCError } from "@trpc/server";
 
 export const appRouter = router({
@@ -141,6 +141,12 @@ export const appRouter = router({
       .query(async ({ ctx, input }) => {
         return isFavorite(ctx.user.id, input);
       }),
+  }),
+
+  statistics: router({
+    getStats: publicProcedure.query(async () => {
+      return getStatistics();
+    }),
   }),
 });
 

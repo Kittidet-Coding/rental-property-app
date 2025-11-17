@@ -98,3 +98,8 @@
 
 ## Branding Updates
 - [x] Update copyright text from "2024 Rental Property Listing App" to "2025 AllYouNeed Property"
+
+
+## Statistics Update
+- [x] Create API procedure to get statistics (property count, cities count, users count)
+- [x] Update Home page to fetch and display real statistics from database
