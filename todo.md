@@ -143,3 +143,8 @@
 - [x] Create backend API endpoints for landlord data
 - [x] Add navigation link to Dashboard from header
 - [x] Test dashboard functionality
+
+
+## Logout Functionality
+- [x] Add logout button to header navigation
+- [x] Implement logout functionality for authenticated users

@@ -47,8 +47,19 @@ export default function Home() {
           <div className="flex items-center gap-2 lg:gap-3">
             {isAuthenticated ? (
               <>
+                <span className="text-xs lg:text-sm text-foreground/70">Welcome, {user?.name}!</span>
                 <Button variant="outline" onClick={() => setLocation("/dashboard")} size="sm" className="text-xs lg:text-sm">
                   Dashboard
+                </Button>
+                <Button variant="ghost" onClick={() => {
+                  const logoutMutation = trpc.auth.logout.useMutation();
+                  logoutMutation.mutate(undefined, {
+                    onSuccess: () => {
+                      window.location.href = "/";
+                    },
+                  });
+                }} size="sm" className="text-xs lg:text-sm">
+                  Log Out
                 </Button>
               </>
             ) : (
