@@ -26,9 +26,12 @@ export default function PropertyDetail() {
   });
 
   // Check if property is favorited
-  const { data: favoriteStatus } = trpc.favorites.isFavorite.useQuery(propertyId || 0, {
-    enabled: isAuthenticated && propertyId !== null,
-  });
+  const { data: favoriteStatus } = trpc.favorites.isFavorite.useQuery(
+    propertyId && isAuthenticated ? { propertyId } : null as any,
+    {
+      enabled: isAuthenticated && propertyId !== null,
+    }
+  );
 
   const toggleFavoriteMutation = trpc.favorites.toggle.useMutation({
     onSuccess: (result) => {
@@ -42,7 +45,7 @@ export default function PropertyDetail() {
       return;
     }
     if (propertyId) {
-      toggleFavoriteMutation.mutate(propertyId);
+      toggleFavoriteMutation.mutate({ propertyId });
     }
   };
 
@@ -67,11 +70,28 @@ export default function PropertyDetail() {
     setShowMessageForm(true);
   };
 
+  const createInquiryMutation = trpc.inquiries.create.useMutation({
+    onSuccess: () => {
+      alert("Thank you! Your inquiry has been sent to the landlord.");
+      setMessageForm({ name: "", email: "", phone: "", message: "" });
+      setShowMessageForm(false);
+    },
+    onError: (error) => {
+      alert(`Error sending inquiry: ${error.message}`);
+    },
+  });
+
   const handleSubmitMessage = (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Message sent to landlord!\n\nName: ${messageForm.name}\nEmail: ${messageForm.email}\nPhone: ${messageForm.phone}\nMessage: ${messageForm.message}`);
-    setMessageForm({ name: "", email: "", phone: "", message: "" });
-    setShowMessageForm(false);
+    if (propertyId) {
+      createInquiryMutation.mutate({
+        propertyId,
+        name: messageForm.name,
+        email: messageForm.email,
+        phone: messageForm.phone || undefined,
+        message: messageForm.message,
+      });
+    }
   };
 
   const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -360,8 +380,8 @@ export default function PropertyDetail() {
                   />
                 </div>
                 <div className="flex gap-2 pt-4">
-                  <Button type="submit" className="flex-1 bg-primary hover:bg-primary/90">
-                    Send Message
+                  <Button type="submit" className="flex-1 bg-primary hover:bg-primary/90" disabled={createInquiryMutation.isPending}>
+                    {createInquiryMutation.isPending ? "Sending..." : "Send Message"}
                   </Button>
                   <Button type="button" variant="outline" onClick={() => setShowMessageForm(false)} className="flex-1">
                     Cancel

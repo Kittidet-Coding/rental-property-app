@@ -3,8 +3,9 @@ import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { publicProcedure, router, protectedProcedure } from "./_core/trpc";
 import { z } from "zod";
-import { getProperties, getPropertyById, getPropertyImages, createProperty, updateProperty, deleteProperty, toggleFavorite, getUserFavorites, isFavorite, getStatistics, getLandlordProperties, getLandlordInquiries, getLandlordDashboardStats } from "./db";
+import { getProperties, getPropertyById, getPropertyImages, createProperty, updateProperty, deleteProperty, toggleFavorite, getUserFavorites, isFavorite, getStatistics, getLandlordProperties, getLandlordInquiries, getLandlordDashboardStats, createContact } from "./db";
 import { TRPCError } from "@trpc/server";
+import { sendInquiryNotificationToLandlord, sendInquiryConfirmationToRenter } from "./_core/emailService";
 
 export const appRouter = router({
   // if you need to use socket.io, read and register route in server/_core/index.ts, all api should start with '/api/' so that the gateway can route correctly
@@ -125,9 +126,9 @@ export const appRouter = router({
 
   favorites: router({
     toggle: protectedProcedure
-      .input(z.number())
+      .input(z.object({ propertyId: z.number() }))
       .mutation(async ({ ctx, input }) => {
-        return toggleFavorite(ctx.user.id, input);
+        return toggleFavorite(ctx.user.id, input.propertyId);
       }),
 
     list: protectedProcedure.query(async ({ ctx }) => {
@@ -135,9 +136,9 @@ export const appRouter = router({
     }),
 
     isFavorite: protectedProcedure
-      .input(z.number())
+      .input(z.object({ propertyId: z.number() }))
       .query(async ({ ctx, input }) => {
-        return isFavorite(ctx.user.id, input);
+        return isFavorite(ctx.user.id, input.propertyId);
       }),
   }),
 
@@ -159,6 +160,50 @@ export const appRouter = router({
     dashboardStats: protectedProcedure.query(async ({ ctx }) => {
       return getLandlordDashboardStats(ctx.user.id);
     }),
+  }),
+
+  inquiries: router({
+    create: publicProcedure
+      .input(
+        z.object({
+          propertyId: z.number(),
+          name: z.string().min(1),
+          email: z.string().email(),
+          phone: z.string().optional(),
+          message: z.string().min(1),
+        })
+      )
+      .mutation(async ({ input }) => {
+        // Create the inquiry in the database
+        await createContact(input);
+
+        // Get property details for email
+        const property = await getPropertyById(input.propertyId);
+        if (!property) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Property not found" });
+        }
+
+        // Send email to landlord (using a placeholder email for now)
+        await sendInquiryNotificationToLandlord(
+          "landlord@example.com",
+          "Landlord",
+          property.title,
+          input.name,
+          input.email,
+          input.phone || null,
+          input.message
+        );
+
+        // Send confirmation email to renter
+        await sendInquiryConfirmationToRenter(
+          input.email,
+          input.name,
+          property.title,
+          "Landlord"
+        );
+
+        return { success: true };
+      }),
   }),
 });
 

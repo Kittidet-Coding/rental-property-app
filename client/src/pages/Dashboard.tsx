@@ -3,7 +3,7 @@ import { useLocation } from "wouter";
 import { trpc } from "@/lib/trpc";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Plus, Trash2, Eye, MessageSquare, Home, TrendingUp } from "lucide-react";
+import { Plus, Trash2, Eye, MessageSquare, Home, TrendingUp, Edit } from "lucide-react";
 import { getLoginUrl } from "@/const";
 
 export default function Dashboard() {
@@ -151,8 +151,9 @@ export default function Dashboard() {
                         variant="outline"
                         size="sm"
                         className="flex-1"
-                        onClick={() => setLocation(`/edit-property/${property.id}`)}
+                        onClick={() => setLocation(`/edit-property?id=${property.id}`)}
                       >
+                        <Edit className="w-4 h-4 mr-2" />
                         Edit
                       </Button>
                       <Button

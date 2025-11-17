@@ -2,9 +2,9 @@ import { useAuth } from "@/_core/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { APP_LOGO, APP_TITLE, getLoginUrl } from "@/const";
-import { useLocation } from "wouter";
+import { useLocation, Link } from "wouter";
 import { Search, MapPin, Home as HomeIcon, Users } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { trpc } from "@/lib/trpc";
 
 export default function Home() {
@@ -33,16 +33,19 @@ export default function Home() {
             <span className="text-lg lg:text-xl font-bold text-foreground">{APP_TITLE}</span>
           </div>
 
-          <nav className="hidden md:flex items-center gap-4 lg:gap-6">
-            <a href="/listings" className="text-foreground hover:text-primary transition text-sm lg:text-base">
+               <nav className="hidden md:flex items-center gap-6">
+            <Link href="/listings" className="text-foreground/60 hover:text-foreground transition-colors">
               Browse Rentals
-            </a>
-            <a href="#" className="text-foreground hover:text-primary transition text-sm lg:text-base">
+            </Link>
+            <Link href="/favorites" className="text-foreground/60 hover:text-foreground transition-colors">
+              Favorites
+            </Link>
+            <Link href="/" className="text-foreground/60 hover:text-foreground transition-colors">
               Payments
-            </a>
-            <a href="#" className="text-foreground hover:text-primary transition text-sm lg:text-base">
+            </Link>
+            <Link href="/" className="text-foreground/60 hover:text-foreground transition-colors">
               Screening
-            </a>
+            </Link>
           </nav>
 
           <div className="flex items-center gap-2 lg:gap-3">

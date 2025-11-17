@@ -6,6 +6,8 @@ import Listings from "@/pages/Listings";
 import PropertyDetail from "@/pages/PropertyDetail";
 import AddProperty from "@/pages/AddProperty";
 import Dashboard from "@/pages/Dashboard";
+import Favorites from "./pages/Favorites";
+import EditProperty from "./pages/EditProperty";
 import { Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -18,6 +20,8 @@ function Router() {
       <Route path={"/property/:id"} component={PropertyDetail} />
       <Route path={"/add-property"} component={AddProperty} />
       <Route path={"/dashboard"} component={Dashboard} />
+      <Route path={"/favorites"} component={Favorites} />
+      <Route path={"/edit-property"} component={EditProperty} />
       <Route path={"/404"} component={NotFound} />
       {/* Final fallback route */}
       <Route component={NotFound} />

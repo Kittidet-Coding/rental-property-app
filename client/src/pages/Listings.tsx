@@ -40,18 +40,18 @@ export default function Listings() {
   // Update favorites set when user favorites load
   useMemo(() => {
     if (userFavorites.length > 0) {
-      setFavorites(new Set(userFavorites.map((fav) => fav.propertyId)));
+      setFavorites(new Set(userFavorites.map((fav) => fav.id)));
     }
   }, [userFavorites]);
 
   const toggleFavoriteMutation = trpc.favorites.toggle.useMutation({
-    onSuccess: (result, propertyId) => {
+    onSuccess: (result, variables) => {
       setFavorites((prev) => {
         const newSet = new Set(prev);
         if (result.isFavorite) {
-          newSet.add(propertyId);
+          newSet.add(variables.propertyId);
         } else {
-          newSet.delete(propertyId);
+          newSet.delete(variables.propertyId);
         }
         return newSet;
       });
@@ -72,7 +72,7 @@ export default function Listings() {
       alert("Please log in to save favorites");
       return;
     }
-    toggleFavoriteMutation.mutate(propertyId);
+    toggleFavoriteMutation.mutate({ propertyId });
   };
 
   const handleFilterChange = (key: string, value: any) => {

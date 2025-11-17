@@ -217,7 +217,38 @@ export async function getUserFavorites(userId: number) {
   const db = await getDb();
   if (!db) return [];
 
-  return db.select().from(favorites).where(eq(favorites.userId, userId));
+  // Get all favorite properties with their details
+  const favoriteList = await db
+    .select({
+      id: properties.id,
+      title: properties.title,
+      description: properties.description,
+      price: properties.price,
+      beds: properties.beds,
+      baths: properties.baths,
+      sqm: properties.sqm,
+      address: properties.address,
+      city: properties.city,
+      country: properties.country,
+      zipCode: properties.zipCode,
+      type: properties.type,
+      petFriendly: properties.petFriendly,
+      parking: properties.parking,
+      ownerId: properties.ownerId,
+    })
+    .from(favorites)
+    .innerJoin(properties, eq(favorites.propertyId, properties.id))
+    .where(eq(favorites.userId, userId));
+
+  // Get images for each property
+  const propertiesWithImages = await Promise.all(
+    favoriteList.map(async (property) => {
+      const images = await getPropertyImages(property.id);
+      return { ...property, images };
+    })
+  );
+
+  return propertiesWithImages;
 }
 
 export async function isFavorite(userId: number, propertyId: number) {
@@ -320,4 +351,47 @@ export async function getLandlordDashboardStats(ownerId: number) {
     console.error("Error fetching landlord stats:", error);
     return { totalProperties: 0, totalInquiries: 0, totalViews: 0 };
   }
+}
+
+
+// Contact/Inquiry Functions
+export async function createContact(data: {
+  propertyId: number;
+  name: string;
+  email: string;
+  phone?: string;
+  message: string;
+}) {
+  const db = await getDb();
+  if (!db) {
+    throw new Error("Database not available");
+  }
+
+  try {
+    const result = await db.insert(contacts).values({
+      propertyId: data.propertyId,
+      name: data.name,
+      email: data.email,
+      phone: data.phone || null,
+      message: data.message,
+    });
+
+    return result;
+  } catch (error) {
+    console.error("[Database] Failed to create contact:", error);
+    throw error;
+  }
+}
+
+export async function getContactById(id: number) {
+  const db = await getDb();
+  if (!db) return null;
+
+  const result = await db
+    .select()
+    .from(contacts)
+    .where(eq(contacts.id, id))
+    .limit(1);
+
+  return result.length > 0 ? result[0] : null;
 }

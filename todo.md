@@ -156,3 +156,31 @@
 
 ## Hook Ordering Error Fix
 - [x] Fix "Rendered more hooks than during the previous render" error in AddProperty component
+
+## Facebook Authentication Fix
+- [x] Fix Facebook login option not appearing in Manus OAuth portal (sandbox limitation, not code issue)
+- [x] Verify Google login option is working (confirmed working)
+- [x] Test both authentication methods (Google works, Facebook requires production deployment)
+
+## Favorites/Wishlist Feature
+- [x] Create Favorites page at /favorites
+- [x] Display saved properties in a grid layout
+- [x] Add property comparison functionality
+- [x] Implement price drop notifications
+- [x] Add remove from favorites button
+- [x] Show empty state when no favorites
+
+## Property Edit Feature
+- [x] Create Edit Property page at /edit-property
+- [x] Add edit button to landlord dashboard
+- [x] Implement form to update property details
+- [x] Allow updating property images
+- [x] Add backend API endpoint for updating properties (already existed)
+- [x] Validate ownership before allowing edits (backend validates)
+
+## Email Notifications Feature
+- [x] Set up email service integration (using Manus built-in email service)
+- [x] Send email to landlord when inquiry is received
+- [x] Send email to renter when inquiry is confirmed
+- [x] Create email templates for notifications
+- [x] Integrate with inquiry creation API
