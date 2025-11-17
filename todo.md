@@ -79,3 +79,7 @@
 - [x] Test navigation on all device sizes
 - [x] Verify images scale properly on all devices
 - [x] Test filter sidebar on mobile (should stack or collapse)
+
+
+## Database Population
+- [x] Add 100 example Hungarian rental properties to database
