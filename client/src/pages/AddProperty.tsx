@@ -11,8 +11,20 @@ import { Textarea } from "@/components/ui/textarea";
 
 export default function AddProperty() {
   const [, setLocation] = useLocation();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, loading } = useAuth();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
+          <p className="text-foreground/70">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   const [formData, setFormData] = useState({
     title: "",

@@ -129,3 +129,7 @@
 - [x] Update Add Property page to require authentication
 - [x] Add social login buttons to Add Property page
 - [x] Test Gmail and Facebook login flows
+
+
+## Authentication Page Fix
+- [x] Debug and fix authentication page not displaying on Add Property
