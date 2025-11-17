@@ -121,3 +121,11 @@
 - [x] Fix API returning HTML instead of JSON for properties.search endpoint
 - [x] Debug server error when searching for "sweden"
 - [x] Ensure API returns proper JSON error responses
+
+
+## Social Media Authentication
+- [x] Set up Gmail OAuth integration (via Manus OAuth)
+- [x] Set up Facebook OAuth integration (via Manus OAuth)
+- [x] Update Add Property page to require authentication
+- [x] Add social login buttons to Add Property page
+- [x] Test Gmail and Facebook login flows
