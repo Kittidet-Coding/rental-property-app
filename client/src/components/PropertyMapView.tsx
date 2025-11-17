@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MapView } from './Map';
 import { Loader2 } from 'lucide-react';
 
@@ -36,7 +36,8 @@ export default function PropertyMapView({
   searchCoordinates,
 }: PropertyMapViewProps) {
   const mapRef = useRef<google.maps.Map | null>(null);
-  const markersRef = useRef<google.maps.marker.AdvancedMarkerElement[]>([]);
+  const markersRef = useRef<google.maps.Marker[]>([]);
+  const infoWindowRef = useRef<google.maps.InfoWindow | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Calculate center of map based on properties or search location
@@ -86,9 +87,14 @@ export default function PropertyMapView({
     try {
       // Clear existing markers
       markersRef.current.forEach((marker) => {
-        marker.map = null;
+        marker.setMap(null);
       });
       markersRef.current = [];
+
+      // Close existing info window
+      if (infoWindowRef.current) {
+        infoWindowRef.current.close();
+      }
 
       // Filter out properties with invalid coordinates
       const validProperties = properties.filter((p) => {
@@ -108,7 +114,8 @@ export default function PropertyMapView({
             return;
           }
 
-          const marker = new google.maps.marker.AdvancedMarkerElement({
+          // Create a standard marker
+          const marker = new google.maps.Marker({
             map,
             position: { lat, lng },
             title: property.title,
@@ -116,7 +123,7 @@ export default function PropertyMapView({
 
           // Create info window content
           const infoContent = document.createElement('div');
-          infoContent.className = 'p-0 max-w-xs rounded-lg overflow-hidden bg-white';
+          infoContent.className = 'p-0 max-w-xs rounded-lg overflow-hidden';
           
           const imageUrl = property.images && property.images.length > 0 ? property.images[0].imageUrl : null;
           const currency = property.currency || '$';
@@ -139,24 +146,21 @@ export default function PropertyMapView({
             content: infoContent,
           });
 
-          // Add click listeners
-          marker.addEventListener('click', () => {
-            // Close all other info windows
-            markersRef.current.forEach((m) => {
-              if ((m as any).infoWindow) {
-                (m as any).infoWindow.close();
-              }
-            });
+          // Add click listener to marker
+          marker.addListener('click', () => {
+            // Close previous info window
+            if (infoWindowRef.current) {
+              infoWindowRef.current.close();
+            }
 
             infoWindow.open(map, marker);
-            (marker as any).infoWindow = infoWindow;
+            infoWindowRef.current = infoWindow;
 
             if (onPropertyClick) {
               onPropertyClick(property);
             }
           });
 
-          (marker as any).infoWindow = infoWindow;
           markersRef.current.push(marker);
         } catch (e) {
           console.error('Error creating marker for property:', property.id, e);
@@ -184,27 +188,24 @@ export default function PropertyMapView({
     }
   };
 
+  // Update markers when properties change
   useEffect(() => {
     if (mapRef.current) {
       addPropertyMarkers(mapRef.current);
     }
-  }, [properties, onPropertyClick]);
+  }, [properties]);
 
   return (
-    <div className="relative w-full h-full min-h-[500px] rounded-lg overflow-hidden">
+    <div className="relative w-full h-full">
       {isLoading && (
-        <div className="absolute inset-0 bg-white/80 flex items-center justify-center z-10">
-          <div className="flex flex-col items-center gap-2">
-            <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-            <p className="text-sm text-gray-600">Loading map...</p>
-          </div>
+        <div className="absolute inset-0 flex items-center justify-center bg-white/50 z-10">
+          <Loader2 className="animate-spin text-blue-600" size={32} />
         </div>
       )}
-
       <MapView
-        initialCenter={getMapCenter()}
-        initialZoom={properties.length === 1 ? 15 : 12}
         onMapReady={handleMapReady}
+        initialCenter={getMapCenter()}
+        initialZoom={searchCoordinates ? 13 : 4}
       />
     </div>
   );

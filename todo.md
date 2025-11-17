@@ -263,3 +263,7 @@
 - [x] Add map to property detail page showing property location
 - [x] Enhance marker info windows with property images and better styling
 - [x] Implement directions functionality from user location to property
+
+
+## Bug Fixes
+- [x] Fix missing property markers on Google Map in PropertyMapView
